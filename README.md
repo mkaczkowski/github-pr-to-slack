@@ -2,7 +2,7 @@
 
 This extension adds a convenient "Send to Slack" button to GitHub pull request pages, allowing you to quickly share PR information with your team.
 
-![GitHub PR to Slack Extension](promo/send-to-slack-screenshot.png)
+![GitHub PR to Slack Extension](promo/usage.gif)
 
 ## Table of Contents
 
