@@ -1,0 +1,70 @@
+.formField {
+  margin-bottom: 1rem;
+}
+
+.formFieldLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.inputContainer {
+  position: relative;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--pr-color-text-primary);
+  background-color: var(--pr-color-background-input);
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.input:focus {
+  border-color: var(--pr-color-border-focus);
+  outline: 0;
+  box-shadow: var(--pr-shadow-focus);
+}
+
+.input:hover:not(:focus):not(:disabled) {
+  border-color: var(--pr-color-border-hover);
+}
+
+.input:disabled {
+  background-color: var(--pr-color-background-input-disabled);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.textarea {
+  composes: input;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.hasError .formFieldLabel {
+  color: var(--pr-color-danger);
+}
+
+.hasError .input,
+.hasError .textarea {
+  border-color: var(--pr-color-danger);
+}
+
+.hasError .input:focus,
+.hasError .textarea:focus {
+  box-shadow: var(--pr-shadow-focus-danger);
+}
+
+.errorMessage {
+  margin-top: 0.25rem;
+  font-size: 12px;
+  color: var(--pr-color-danger);
+} 

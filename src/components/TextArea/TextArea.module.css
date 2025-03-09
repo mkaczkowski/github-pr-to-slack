@@ -1,0 +1,54 @@
+.textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--pr-color-background-input);
+  color: var(--pr-color-text-primary);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--pr-color-border-focus);
+  box-shadow: var(--pr-shadow-focus);
+}
+
+.textarea:hover:not(:focus):not(:disabled) {
+  border-color: var(--pr-color-border-hover);
+}
+
+.textarea:disabled {
+  background-color: var(--pr-color-background-input-disabled);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.textarea.error {
+  border-color: var(--pr-color-danger);
+}
+
+.textarea.error:focus {
+  box-shadow: var(--pr-shadow-focus-danger);
+}
+
+.errorMessage {
+  color: var(--pr-color-danger);
+  font-size: 12px;
+  margin-top: 0.25rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+} 

@@ -1,0 +1,130 @@
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.header {
+  padding: 20px 30px;
+  background-color: #4a154b;
+  color: white;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.header p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+.form {
+  padding: 20px 30px;
+}
+
+.section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+}
+
+.section:last-of-type {
+  margin-bottom: 10px;
+}
+
+.section h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1d1c1d;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ebeef0;
+}
+
+.group {
+  margin-bottom: 15px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #dfe1e5;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #4a154b;
+  box-shadow: 0 0 0 3px rgba(74, 21, 75, 0.2);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.saveButton {
+  background-color: #4a154b;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.saveButton:hover {
+  background-color: #611f69;
+}
+
+.saveButton:disabled {
+  background-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.errorText {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.successMessage {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+} 

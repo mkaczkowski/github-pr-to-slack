@@ -1,0 +1,766 @@
+.V26LTZPny52lGxpV7daw {
+  display: inline-block;
+  margin-right: 8px;
+} 
+.AisLsJaE_AWnIhDlnTUV {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  border-radius: 4px;
+  appearance: none;
+  gap: 8px;
+}
+
+.cdc4_xoyu5lt350lFjqA {
+  color: var(--pr-color-text-inverse);
+  background-color: var(--pr-color-background-button-primary);
+  box-shadow: var(--pr-shadow-small);
+}
+
+.cdc4_xoyu5lt350lFjqA:hover:not(:disabled) {
+  background-color: var(--pr-color-background-button-primary-hover);
+  box-shadow: var(--pr-shadow-medium);
+  text-decoration: none;
+}
+
+.cdc4_xoyu5lt350lFjqA:active:not(:disabled) {
+  background-color: var(--pr-color-background-button-primary-active);
+  box-shadow: var(--pr-shadow-small-pressed);
+}
+
+.pJ5lpFCDv2hmsZmokGiV {
+  color: var(--pr-color-text-primary);
+  background-color: var(--pr-color-background-tertiary);
+  border: 1px solid var(--pr-color-border-primary);
+  box-shadow: var(--pr-shadow-secondary);
+}
+
+.pJ5lpFCDv2hmsZmokGiV:hover:not(:disabled) {
+  background-color: var(--pr-color-background-secondary);
+  box-shadow: var(--pr-shadow-secondary-hover);
+}
+
+.pJ5lpFCDv2hmsZmokGiV:active:not(:disabled) {
+  background-color: var(--pr-color-background-button-active);
+  box-shadow: var(--pr-shadow-secondary-pressed);
+}
+
+.GJEcYiVw473xkgSIl0wU {
+  color: var(--pr-color-text-inverse);
+  background-color: var(--pr-color-background-button-danger);
+  box-shadow: var(--pr-shadow-small);
+}
+
+.GJEcYiVw473xkgSIl0wU:hover:not(:disabled) {
+  background-color: var(--pr-color-background-button-danger-hover);
+  box-shadow: var(--pr-shadow-medium);
+}
+
+.GJEcYiVw473xkgSIl0wU:active:not(:disabled) {
+  background-color: var(--pr-color-background-button-danger-active);
+  box-shadow: var(--pr-shadow-small-pressed);
+}
+
+.AisLsJaE_AWnIhDlnTUV:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.U3Xh5y2O2M780wEYJnKh {
+  position: relative;
+}
+
+.M_FVJJTsGAz7B2bptmXx {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--pr-color-text-inverse);
+  animation: XSCqlMMIM1oMP6xfJ7LB 0.8s linear infinite;
+  margin-right: 0.5rem;
+}
+
+.pJ5lpFCDv2hmsZmokGiV .M_FVJJTsGAz7B2bptmXx {
+  border: 2px solid rgba(201, 209, 217, 0.3);
+  border-top-color: var(--pr-color-text-primary);
+}
+
+.J3foVRpDoRkin38OVSiT {
+  margin-left: 0.5rem;
+}
+
+@keyframes XSCqlMMIM1oMP6xfJ7LB {
+  to {
+    transform: rotate(360deg);
+  }
+} 
+.gFdNSTydCZiLfHtvPYiv {
+  margin-bottom: 1rem;
+}
+
+.KRlYBJ_nO8h2QxwHjxuW {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+._9wdN2CSlM0PoPHUji6M {
+  position: relative;
+}
+
+.TP1RKh4UlAZYTTztrgfn {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--pr-color-text-primary);
+  background-color: var(--pr-color-background-input);
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.TP1RKh4UlAZYTTztrgfn:focus {
+  border-color: var(--pr-color-border-focus);
+  outline: 0;
+  box-shadow: var(--pr-shadow-focus);
+}
+
+.TP1RKh4UlAZYTTztrgfn:hover:not(:focus):not(:disabled) {
+  border-color: var(--pr-color-border-hover);
+}
+
+.TP1RKh4UlAZYTTztrgfn:disabled {
+  background-color: var(--pr-color-background-input-disabled);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.zfNCMqYlb5u6SFPLU1UI {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.a5mLCq1HyjPvmbeNGxcq .KRlYBJ_nO8h2QxwHjxuW {
+  color: var(--pr-color-danger);
+}
+
+.a5mLCq1HyjPvmbeNGxcq .TP1RKh4UlAZYTTztrgfn,
+.a5mLCq1HyjPvmbeNGxcq .zfNCMqYlb5u6SFPLU1UI {
+  border-color: var(--pr-color-danger);
+}
+
+.a5mLCq1HyjPvmbeNGxcq .TP1RKh4UlAZYTTztrgfn:focus,
+.a5mLCq1HyjPvmbeNGxcq .zfNCMqYlb5u6SFPLU1UI:focus {
+  box-shadow: var(--pr-shadow-focus-danger);
+}
+
+.bA07LV43JzoAeTVRoJdo {
+  margin-top: 0.25rem;
+  font-size: 12px;
+  color: var(--pr-color-danger);
+} 
+.b9AjaDWcM7PKRWwCjPLZ {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.i9jVtBEPGg7qOcpw9z8T {
+  background-color: var(--pr-color-success-background);
+  color: var(--pr-color-success-text);
+}
+
+.IanWD6faDrzZPl0P6fDY {
+  background-color: var(--pr-color-error-background);
+  color: var(--pr-color-error-text);
+}
+
+.T6_URmPnNgcUVhI454YQ {
+  background-color: var(--pr-color-warning-background);
+  color: var(--pr-color-warning-text);
+} 
+.akhKgp84inCD9w0G0GIU {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--pr-color-background-input);
+  color: var(--pr-color-text-primary);
+}
+
+.akhKgp84inCD9w0G0GIU:focus {
+  outline: none;
+  border-color: var(--pr-color-border-focus);
+  box-shadow: var(--pr-shadow-focus);
+}
+
+.akhKgp84inCD9w0G0GIU:hover:not(:focus):not(:disabled) {
+  border-color: var(--pr-color-border-hover);
+}
+
+.akhKgp84inCD9w0G0GIU:disabled {
+  background-color: var(--pr-color-background-input-disabled);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.akhKgp84inCD9w0G0GIU.hued_dmYh2NEepz1dHmV {
+  border-color: var(--pr-color-danger);
+}
+
+.akhKgp84inCD9w0G0GIU.hued_dmYh2NEepz1dHmV:focus {
+  box-shadow: var(--pr-shadow-focus-danger);
+}
+
+.sd4kiYPRN7wKNMBAVuIK {
+  color: var(--pr-color-danger);
+  font-size: 12px;
+  margin-top: 0.25rem;
+}
+
+.S_2rYwKnBeIhgx3s2Nd8 {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.eWkAjtsHf9PBEwFCXw1W {
+  margin-bottom: 1rem;
+} 
+.bKE7dB5Xdg6xH0qgFhjg {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: var(--pr-color-background-primary);
+}
+
+.E0g_enZCUxXQcB2yTOVg {
+  margin-bottom: 16px;
+}
+
+.E0g_enZCUxXQcB2yTOVg label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.CHoskO7HbZHh_OPdvrMg {
+  background-color: var(--pr-color-background-secondary);
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.C_IWRKaPEqQ6VobmbRsu {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.mgJyJzRmYYcdxu01rNWg {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pr-color-text-secondary);
+}
+
+.gf3cfZJH5ZZvY7gY3hP8 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gf3cfZJH5ZZvY7gY3hP8 input[type="checkbox"] {
+  margin-right: 8px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 3px;
+}
+
+.gf3cfZJH5ZZvY7gY3hP8 label {
+  margin-bottom: 0;
+  font-weight: normal;
+  color: var(--pr-color-text-primary);
+} 
+.zBJGq3WWjez1suRIeTwP {
+  margin-right: 4px;
+}
+
+.dALEiiQoWyhBcxEKrnhb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--pr-color-slack-primary-dark);
+  border-radius: 6px;
+  appearance: none;
+  color: var(--pr-color-white);
+  background-color: var(--pr-color-slack-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.dALEiiQoWyhBcxEKrnhb:hover {
+  background-color: var(--pr-color-slack-primary-hover) !important;
+  border-color: var(--pr-color-slack-primary-border) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dALEiiQoWyhBcxEKrnhb:active {
+  background-color: var(--pr-color-slack-primary-active) !important;
+  border-color: var(--pr-color-slack-primary-border) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(1px) !important;
+}
+
+.wDoJ0UFw9yH9n6TnPzSJ {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pr-color-white);
+  margin-right: 4px;
+}
+
+.FBpug79VF3yWIEfikzus {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+} 
+._DC9nACM3jmBU1H19HvP {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--pr-color-background-secondary);
+  border-top: 1px solid var(--pr-color-border-primary);
+  z-index: 1;
+} 
+.LDjmwSNgKArTbxZqWTOM {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--pr-color-slack-primary-dark);
+  background-color: var(--pr-color-slack-primary);
+  color: var(--pr-color-white);
+}
+
+.AdhX3_Wi5t5aWnYAe9s1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--pr-color-white);
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 0;
+}
+
+.AdhX3_Wi5t5aWnYAe9s1::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 122.8 122.8%27%3E%3Cpath d=%27M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z%27 fill=%27%23e01e5a%27/%3E%3Cpath d=%27M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z%27 fill=%27%2336c5f0%27/%3E%3Cpath d=%27M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z%27 fill=%27%232eb67d%27/%3E%3Cpath d=%27M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z%27 fill=%27%23ecb22e%27/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-right: 10px;
+}
+
+.CfdLdJ_xgoE0COfE1qrg {
+  background: none;
+  border: none;
+  color: var(--pr-color-white-transparent-70);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.CfdLdJ_xgoE0COfE1qrg:hover {
+  color: var(--pr-color-white);
+  background-color: var(--pr-color-white-transparent-10);
+} 
+.xgngDxyMAqbD3EudHnqg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--pr-color-overlay-background);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.FJJneS1h2sUT7QwQS_EY {
+  width: 620px;
+  max-width: 90vw;
+  max-height: 90vh;
+  background-color: var(--pr-color-background-primary);
+  border-radius: 6px;
+  box-shadow: var(--pr-shadow-popup);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: var(--pr-color-text-primary);
+  font-size: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: LkUFK2yAx2KuiHCGcs8X 0.2s ease-out;
+  border: 1px solid var(--pr-color-border-muted);
+}
+
+.eWW9caDi_VS9HsZX97D1 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.eDO9M6ldFjo2gd8fIpvL {
+  padding: 16px;
+}
+
+.GnK8942jsrNQPMh_N4Df {
+  margin-bottom: 16px;
+}
+
+.GnK8942jsrNQPMh_N4Df label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+@keyframes LkUFK2yAx2KuiHCGcs8X {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+} 
+
+/* Slack button styles - These are used by the injected button in GitHub */
+.slack-button-container {
+  display: inline-flex;
+}
+
+.slack-button-container > * {
+  margin-right: 2px;
+}
+
+.slack-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  border-radius: 4px;
+  appearance: none;
+  color: var(--pr-color-white);
+  background-color: var(--pr-color-slack-primary);
+  box-shadow: var(--pr-shadow-small);
+  gap: 8px;
+  
+}
+
+.slack-button:hover {
+  background-color: var(--pr-color-slack-primary-hover);
+  box-shadow: var(--pr-shadow-medium);
+  text-decoration: none;
+}
+
+.slack-button:active {
+  background-color: var(--pr-color-slack-primary-active);
+  box-shadow: var(--pr-shadow-small-pressed);
+}
+/* Import light theme variables (default) */
+:root {
+  /* Base colors */
+  --pr-color-text-primary: #24292f;
+  --pr-color-text-secondary: #57606a;
+  --pr-color-text-tertiary: #6e7781;
+  --pr-color-text-placeholder: #6e7781;
+  --pr-color-text-disabled: #8c959f;
+  --pr-color-text-inverse: #ffffff;
+  --pr-color-text-link: #0969da;
+  --pr-color-text-danger: #cf222e;
+  --pr-color-text-success: #1a7f37;
+  --pr-color-text-warning: #9a6700;
+  --pr-color-text-attention: #9a6700;
+
+  /* Background colors */
+  
+  --pr-color-background-primary: #ffffff;
+  --pr-color-background-secondary: #f6f8fa;
+  --pr-color-background-tertiary: #f3f4f6;
+  --pr-color-background-overlay: rgba(27, 31, 36, 0.5);
+  --pr-color-background-info: #ddf4ff;
+  --pr-color-background-success: #dafbe1;
+  --pr-color-background-warning: #fff8c5;
+  --pr-color-background-danger: #ffebe9;
+  --pr-color-background-attention: #fff8c5;
+  --pr-color-background-button-primary: #2da44e;
+  --pr-color-background-button-primary-hover: #2c974b;
+  --pr-color-background-button-primary-active: #298e46;
+  --pr-color-background-button-danger: #cf222e;
+  --pr-color-background-button-danger-hover: #bc2129;
+  --pr-color-background-button-danger-active: #a40e26;
+  --pr-color-background-button-active: #ebecf0;
+
+  /* Common colors */
+  --pr-color-white: #ffffff;
+  --pr-color-black: #1d1c1d;
+
+  /* Border colors */
+  --pr-color-border-primary: #d0d7de;
+  --pr-color-border-secondary: #d8dee4;
+  --pr-color-border-muted: rgba(27, 31, 36, 0.15);
+  --pr-color-border-hover: #bbb;
+  --pr-color-border-focus: #0969da;
+  --pr-color-border-info: #54aeff;
+  --pr-color-border-success: #1a7f37;
+  --pr-color-border-warning: #9a6700;
+  --pr-color-border-danger: #cf222e;
+  --pr-color-border-attention: #9a6700;
+
+  /* Overlay colors */
+  --pr-color-overlay-background: rgba(27, 31, 36, 0.5);
+  --pr-color-white-transparent-70: rgba(255, 255, 255, 0.7);
+  --pr-color-white-transparent-10: rgba(255, 255, 255, 0.1);
+
+  /* Shadow colors */
+  --pr-color-shadow-primary: rgba(140, 149, 159, 0.2);
+  --pr-color-shadow-inset: rgba(208, 215, 222, 0.2);
+  --pr-color-shadow-ambient: rgba(27, 31, 36, 0.04);
+  --pr-color-shadow-highlight: rgba(255, 255, 255, 0.25);
+  --pr-color-shadow-focus-slack: rgba(9, 105, 218, 0.3);
+  --pr-color-shadow-focus-danger: rgba(207, 34, 46, 0.3);
+
+  /* Box shadows */
+  --pr-shadow-popup: 0 8px 24px var(--pr-color-shadow-primary);
+  --pr-shadow-dropdown: 0 8px 24px var(--pr-color-shadow-primary);
+  --pr-shadow-button: 0 1px 0 var(--pr-color-shadow-ambient), inset 0 1px 0 var(--pr-color-shadow-highlight);
+  --pr-shadow-button-active: inset 0 1px 0 var(--pr-color-shadow-inset);
+  --pr-shadow-small: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --pr-shadow-medium: 0 3px 6px rgba(140, 149, 159, 0.15);
+  --pr-shadow-large: 0 8px 24px rgba(140, 149, 159, 0.2);
+  --pr-shadow-small-pressed: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --pr-shadow-secondary: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --pr-shadow-secondary-hover: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --pr-shadow-secondary-pressed: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --pr-shadow-focus: 0 0 0 3px var(--pr-color-shadow-focus-slack);
+  --pr-shadow-focus-danger: 0 0 0 3px var(--pr-color-shadow-focus-danger);
+  --pr-shadow-focus-input: 0 0 0 2px var(--pr-color-border-focus);
+
+  /* Slack specific colors */
+  --pr-color-slack-primary: #611f69;
+  --pr-color-slack-primary-dark: #4a154b;
+  --pr-color-slack-primary-hover: #7A2B7D;
+  --pr-color-slack-primary-active: #8D3391;
+  --pr-color-slack-primary-border: #B44AC0;
+
+  /* Slack logo colors */
+  --pr-color-slack-logo-red: #e01e5a;
+  --pr-color-slack-logo-blue: #36c5f0;
+  --pr-color-slack-logo-green: #2eb67d;
+  --pr-color-slack-logo-yellow: #ecb22e;
+
+  /* Status colors */
+  --pr-color-danger: #e01e5a;
+  --pr-color-danger-hover: #c41a4f;
+  --pr-color-danger-active: #a81745;
+  --pr-color-success: #2eb67d;
+  --pr-color-success-hover: #25a06e;
+  --pr-color-success-active: #1e8a5f;
+  --pr-color-warning: #ecb22e;
+  --pr-color-warning-hover: #d9a429;
+  --pr-color-warning-active: #c79525;
+  --pr-color-info: #36c5f0;
+  --pr-color-info-hover: #2fb8e3;
+  --pr-color-info-active: #29a8d0;
+  --pr-color-success-text: #1e8a5f;
+  --pr-color-success-background: #e6f7f1;
+  --pr-color-error-text: #c41a4f;
+  --pr-color-error-background: #fde8ef;
+  --pr-color-warning-text: #b78620;
+  --pr-color-warning-background: #fef7e6;
+  --pr-color-info-text: #1d8eb3;
+  --pr-color-info-background: #e6f6fc;
+
+  /* color-scheme: light; */
+}
+
+/* Apply dark theme variables when system preference is dark and theme-system is active */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme variables */
+    --pr-color-text-primary: #c9d1d9;
+    --pr-color-text-secondary: #8b949e;
+    --pr-color-text-tertiary: #6e7681;
+    --pr-color-text-placeholder: #6e7681;
+    --pr-color-text-disabled: #484f58;
+    --pr-color-text-inverse: #0d1117;
+    --pr-color-text-link: #58a6ff;
+    --pr-color-text-danger: #f85149;
+    --pr-color-text-success: #3fb950;
+    --pr-color-text-warning: #d29922;
+    --pr-color-text-attention: #d29922;
+
+    /* Background colors */
+    --pr-color-background-primary: #0d1117;
+    --pr-color-background-secondary: #161b22;
+    --pr-color-background-tertiary: #21262d;
+    --pr-color-background-overlay: rgba(1, 4, 9, 0.6);
+    --pr-color-background-info: rgba(56, 139, 253, 0.1);
+    --pr-color-background-success: rgba(46, 160, 67, 0.1);
+    --pr-color-background-warning: rgba(187, 128, 9, 0.1);
+    --pr-color-background-danger: rgba(248, 81, 73, 0.1);
+    --pr-color-background-attention: rgba(187, 128, 9, 0.1);
+    --pr-color-background-button-primary: #238636;
+    --pr-color-background-button-primary-hover: #2ea043;
+    --pr-color-background-button-primary-active: #3fb950;
+    --pr-color-background-button-danger: #da3633;
+    --pr-color-background-button-danger-hover: #f85149;
+    --pr-color-background-button-danger-active: #ff7b72;
+    --pr-color-background-button-active: #30363d;
+    --pr-color-background-input: #0d1117;
+    --pr-color-background-input-disabled: #161b22;
+
+    /* Common colors */
+    --pr-color-white: #c9d1d9;
+    --pr-color-black: #0d1117;
+
+    /* Border colors */
+    --pr-color-border-primary: #30363d;
+    --pr-color-border-secondary: #21262d;
+    --pr-color-border-muted: rgba(240, 246, 252, 0.1);
+    --pr-color-border-hover: #8b949e;
+    --pr-color-border-focus: #58a6ff;
+    --pr-color-border-info: #58a6ff;
+    --pr-color-border-success: #3fb950;
+    --pr-color-border-warning: #d29922;
+    --pr-color-border-danger: #f85149;
+    --pr-color-border-attention: #d29922;
+
+    /* Shadow colors */
+    --pr-color-shadow-primary: rgba(1, 4, 9, 0.3);
+    --pr-color-shadow-inset: rgba(1, 4, 9, 0.3);
+    --pr-color-shadow-ambient: rgba(1, 4, 9, 0.3);
+    --pr-color-shadow-highlight: rgba(255, 255, 255, 0.05);
+    --pr-color-shadow-focus-slack: rgba(88, 166, 255, 0.3);
+    --pr-color-shadow-focus-danger: rgba(248, 81, 73, 0.3);
+
+    /* Box shadows */
+    --pr-shadow-popup: 0 8px 24px rgba(1, 4, 9, 0.3);
+    --pr-shadow-dropdown: 0 8px 24px rgba(1, 4, 9, 0.3);
+    --pr-shadow-button: 0 1px 0 rgba(1, 4, 9, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    --pr-shadow-button-active: inset 0 1px 0 rgba(1, 4, 9, 0.2);
+    --pr-shadow-small: 0 1px 3px rgba(1, 4, 9, 0.2);
+    --pr-shadow-medium: 0 3px 6px rgba(1, 4, 9, 0.3);
+    --pr-shadow-large: 0 8px 24px rgba(1, 4, 9, 0.4);
+    --pr-shadow-small-pressed: 0 1px 2px rgba(1, 4, 9, 0.2);
+    --pr-shadow-secondary: 0 1px 3px rgba(1, 4, 9, 0.15);
+    --pr-shadow-secondary-hover: 0 2px 5px rgba(1, 4, 9, 0.2);
+    --pr-shadow-secondary-pressed: 0 1px 2px rgba(1, 4, 9, 0.15);
+    --pr-shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    --pr-shadow-focus-danger: 0 0 0 3px rgba(248, 81, 73, 0.2);
+    --pr-shadow-focus-input: 0 0 0 2px rgba(88, 166, 255, 0.2);
+
+    /* Slack specific colors */
+    --pr-color-slack-primary: #4a154b;
+    --pr-color-slack-primary-dark: #632c64;
+    --pr-color-slack-primary-hover: #7c3085;
+    --pr-color-slack-primary-active: #893d96;
+    --pr-color-slack-primary-border: #9d4db0;
+
+    /* Status colors */
+    --pr-color-danger: #f85149;
+    --pr-color-danger-hover: #ff6a65;
+    --pr-color-danger-active: #ff7b72;
+    --pr-color-success: #3fb950;
+    --pr-color-success-hover: #46c25a;
+    --pr-color-success-active: #4fd364;
+    --pr-color-warning: #d29922;
+    --pr-color-warning-hover: #e0a93e;
+    --pr-color-warning-active: #eac54f;
+    --pr-color-info: #58a6ff;
+    --pr-color-info-hover: #79b8ff;
+    --pr-color-info-active: #a5d6ff;
+    --pr-color-success-text: #3fb950;
+    --pr-color-success-background: rgba(46, 160, 67, 0.1);
+    --pr-color-error-text: #f85149;
+    --pr-color-error-background: rgba(248, 81, 73, 0.1);
+    --pr-color-warning-text: #d29922;
+    --pr-color-warning-background: rgba(187, 128, 9, 0.1);
+    --pr-color-info-text: #58a6ff;
+    --pr-color-info-background: rgba(56, 139, 253, 0.1);
+
+    /* color-scheme: dark; */
+  }
+}
+

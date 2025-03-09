@@ -1,0 +1,66 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--pr-color-overlay-background);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.popup {
+  width: 620px;
+  max-width: 90vw;
+  max-height: 90vh;
+  background-color: var(--pr-color-background-primary);
+  border-radius: 6px;
+  box-shadow: var(--pr-shadow-popup);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: var(--pr-color-text-primary);
+  font-size: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: popupAppear 0.2s ease-out;
+  border: 1px solid var(--pr-color-border-muted);
+}
+
+.container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.body {
+  padding: 16px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+@keyframes popupAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+} 

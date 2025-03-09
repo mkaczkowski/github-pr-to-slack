@@ -1,0 +1,25 @@
+.statusMessage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.success {
+  background-color: var(--pr-color-success-background);
+  color: var(--pr-color-success-text);
+}
+
+.error {
+  background-color: var(--pr-color-error-background);
+  color: var(--pr-color-error-text);
+}
+
+.warning {
+  background-color: var(--pr-color-warning-background);
+  color: var(--pr-color-warning-text);
+} 

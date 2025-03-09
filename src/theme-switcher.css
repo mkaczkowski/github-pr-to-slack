@@ -1,0 +1,225 @@
+/* Import light theme variables (default) */
+:root {
+  /* Base colors */
+  --pr-color-text-primary: #24292f;
+  --pr-color-text-secondary: #57606a;
+  --pr-color-text-tertiary: #6e7781;
+  --pr-color-text-placeholder: #6e7781;
+  --pr-color-text-disabled: #8c959f;
+  --pr-color-text-inverse: #ffffff;
+  --pr-color-text-link: #0969da;
+  --pr-color-text-danger: #cf222e;
+  --pr-color-text-success: #1a7f37;
+  --pr-color-text-warning: #9a6700;
+  --pr-color-text-attention: #9a6700;
+
+  /* Background colors */
+  
+  --pr-color-background-primary: #ffffff;
+  --pr-color-background-secondary: #f6f8fa;
+  --pr-color-background-tertiary: #f3f4f6;
+  --pr-color-background-overlay: rgba(27, 31, 36, 0.5);
+  --pr-color-background-info: #ddf4ff;
+  --pr-color-background-success: #dafbe1;
+  --pr-color-background-warning: #fff8c5;
+  --pr-color-background-danger: #ffebe9;
+  --pr-color-background-attention: #fff8c5;
+  --pr-color-background-button-primary: #2da44e;
+  --pr-color-background-button-primary-hover: #2c974b;
+  --pr-color-background-button-primary-active: #298e46;
+  --pr-color-background-button-danger: #cf222e;
+  --pr-color-background-button-danger-hover: #bc2129;
+  --pr-color-background-button-danger-active: #a40e26;
+  --pr-color-background-button-active: #ebecf0;
+
+  /* Common colors */
+  --pr-color-white: #ffffff;
+  --pr-color-black: #1d1c1d;
+
+  /* Border colors */
+  --pr-color-border-primary: #d0d7de;
+  --pr-color-border-secondary: #d8dee4;
+  --pr-color-border-muted: rgba(27, 31, 36, 0.15);
+  --pr-color-border-hover: #bbb;
+  --pr-color-border-focus: #0969da;
+  --pr-color-border-info: #54aeff;
+  --pr-color-border-success: #1a7f37;
+  --pr-color-border-warning: #9a6700;
+  --pr-color-border-danger: #cf222e;
+  --pr-color-border-attention: #9a6700;
+
+  /* Overlay colors */
+  --pr-color-overlay-background: rgba(27, 31, 36, 0.5);
+  --pr-color-white-transparent-70: rgba(255, 255, 255, 0.7);
+  --pr-color-white-transparent-10: rgba(255, 255, 255, 0.1);
+
+  /* Shadow colors */
+  --pr-color-shadow-primary: rgba(140, 149, 159, 0.2);
+  --pr-color-shadow-inset: rgba(208, 215, 222, 0.2);
+  --pr-color-shadow-ambient: rgba(27, 31, 36, 0.04);
+  --pr-color-shadow-highlight: rgba(255, 255, 255, 0.25);
+  --pr-color-shadow-focus-slack: rgba(9, 105, 218, 0.3);
+  --pr-color-shadow-focus-danger: rgba(207, 34, 46, 0.3);
+
+  /* Box shadows */
+  --pr-shadow-popup: 0 8px 24px var(--pr-color-shadow-primary);
+  --pr-shadow-dropdown: 0 8px 24px var(--pr-color-shadow-primary);
+  --pr-shadow-button: 0 1px 0 var(--pr-color-shadow-ambient), inset 0 1px 0 var(--pr-color-shadow-highlight);
+  --pr-shadow-button-active: inset 0 1px 0 var(--pr-color-shadow-inset);
+  --pr-shadow-small: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --pr-shadow-medium: 0 3px 6px rgba(140, 149, 159, 0.15);
+  --pr-shadow-large: 0 8px 24px rgba(140, 149, 159, 0.2);
+  --pr-shadow-small-pressed: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --pr-shadow-secondary: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --pr-shadow-secondary-hover: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --pr-shadow-secondary-pressed: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --pr-shadow-focus: 0 0 0 3px var(--pr-color-shadow-focus-slack);
+  --pr-shadow-focus-danger: 0 0 0 3px var(--pr-color-shadow-focus-danger);
+  --pr-shadow-focus-input: 0 0 0 2px var(--pr-color-border-focus);
+
+  /* Slack specific colors */
+  --pr-color-slack-primary: #611f69;
+  --pr-color-slack-primary-dark: #4a154b;
+  --pr-color-slack-primary-hover: #7A2B7D;
+  --pr-color-slack-primary-active: #8D3391;
+  --pr-color-slack-primary-border: #B44AC0;
+
+  /* Slack logo colors */
+  --pr-color-slack-logo-red: #e01e5a;
+  --pr-color-slack-logo-blue: #36c5f0;
+  --pr-color-slack-logo-green: #2eb67d;
+  --pr-color-slack-logo-yellow: #ecb22e;
+
+  /* Status colors */
+  --pr-color-danger: #e01e5a;
+  --pr-color-danger-hover: #c41a4f;
+  --pr-color-danger-active: #a81745;
+  --pr-color-success: #2eb67d;
+  --pr-color-success-hover: #25a06e;
+  --pr-color-success-active: #1e8a5f;
+  --pr-color-warning: #ecb22e;
+  --pr-color-warning-hover: #d9a429;
+  --pr-color-warning-active: #c79525;
+  --pr-color-info: #36c5f0;
+  --pr-color-info-hover: #2fb8e3;
+  --pr-color-info-active: #29a8d0;
+  --pr-color-success-text: #1e8a5f;
+  --pr-color-success-background: #e6f7f1;
+  --pr-color-error-text: #c41a4f;
+  --pr-color-error-background: #fde8ef;
+  --pr-color-warning-text: #b78620;
+  --pr-color-warning-background: #fef7e6;
+  --pr-color-info-text: #1d8eb3;
+  --pr-color-info-background: #e6f6fc;
+
+  /* color-scheme: light; */
+}
+
+/* Apply dark theme variables when system preference is dark and theme-system is active */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark theme variables */
+    --pr-color-text-primary: #c9d1d9;
+    --pr-color-text-secondary: #8b949e;
+    --pr-color-text-tertiary: #6e7681;
+    --pr-color-text-placeholder: #6e7681;
+    --pr-color-text-disabled: #484f58;
+    --pr-color-text-inverse: #0d1117;
+    --pr-color-text-link: #58a6ff;
+    --pr-color-text-danger: #f85149;
+    --pr-color-text-success: #3fb950;
+    --pr-color-text-warning: #d29922;
+    --pr-color-text-attention: #d29922;
+
+    /* Background colors */
+    --pr-color-background-primary: #0d1117;
+    --pr-color-background-secondary: #161b22;
+    --pr-color-background-tertiary: #21262d;
+    --pr-color-background-overlay: rgba(1, 4, 9, 0.6);
+    --pr-color-background-info: rgba(56, 139, 253, 0.1);
+    --pr-color-background-success: rgba(46, 160, 67, 0.1);
+    --pr-color-background-warning: rgba(187, 128, 9, 0.1);
+    --pr-color-background-danger: rgba(248, 81, 73, 0.1);
+    --pr-color-background-attention: rgba(187, 128, 9, 0.1);
+    --pr-color-background-button-primary: #238636;
+    --pr-color-background-button-primary-hover: #2ea043;
+    --pr-color-background-button-primary-active: #3fb950;
+    --pr-color-background-button-danger: #da3633;
+    --pr-color-background-button-danger-hover: #f85149;
+    --pr-color-background-button-danger-active: #ff7b72;
+    --pr-color-background-button-active: #30363d;
+    --pr-color-background-input: #0d1117;
+    --pr-color-background-input-disabled: #161b22;
+
+    /* Common colors */
+    --pr-color-white: #c9d1d9;
+    --pr-color-black: #0d1117;
+
+    /* Border colors */
+    --pr-color-border-primary: #30363d;
+    --pr-color-border-secondary: #21262d;
+    --pr-color-border-muted: rgba(240, 246, 252, 0.1);
+    --pr-color-border-hover: #8b949e;
+    --pr-color-border-focus: #58a6ff;
+    --pr-color-border-info: #58a6ff;
+    --pr-color-border-success: #3fb950;
+    --pr-color-border-warning: #d29922;
+    --pr-color-border-danger: #f85149;
+    --pr-color-border-attention: #d29922;
+
+    /* Shadow colors */
+    --pr-color-shadow-primary: rgba(1, 4, 9, 0.3);
+    --pr-color-shadow-inset: rgba(1, 4, 9, 0.3);
+    --pr-color-shadow-ambient: rgba(1, 4, 9, 0.3);
+    --pr-color-shadow-highlight: rgba(255, 255, 255, 0.05);
+    --pr-color-shadow-focus-slack: rgba(88, 166, 255, 0.3);
+    --pr-color-shadow-focus-danger: rgba(248, 81, 73, 0.3);
+
+    /* Box shadows */
+    --pr-shadow-popup: 0 8px 24px rgba(1, 4, 9, 0.3);
+    --pr-shadow-dropdown: 0 8px 24px rgba(1, 4, 9, 0.3);
+    --pr-shadow-button: 0 1px 0 rgba(1, 4, 9, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    --pr-shadow-button-active: inset 0 1px 0 rgba(1, 4, 9, 0.2);
+    --pr-shadow-small: 0 1px 3px rgba(1, 4, 9, 0.2);
+    --pr-shadow-medium: 0 3px 6px rgba(1, 4, 9, 0.3);
+    --pr-shadow-large: 0 8px 24px rgba(1, 4, 9, 0.4);
+    --pr-shadow-small-pressed: 0 1px 2px rgba(1, 4, 9, 0.2);
+    --pr-shadow-secondary: 0 1px 3px rgba(1, 4, 9, 0.15);
+    --pr-shadow-secondary-hover: 0 2px 5px rgba(1, 4, 9, 0.2);
+    --pr-shadow-secondary-pressed: 0 1px 2px rgba(1, 4, 9, 0.15);
+    --pr-shadow-focus: 0 0 0 3px rgba(88, 166, 255, 0.2);
+    --pr-shadow-focus-danger: 0 0 0 3px rgba(248, 81, 73, 0.2);
+    --pr-shadow-focus-input: 0 0 0 2px rgba(88, 166, 255, 0.2);
+
+    /* Slack specific colors */
+    --pr-color-slack-primary: #4a154b;
+    --pr-color-slack-primary-dark: #632c64;
+    --pr-color-slack-primary-hover: #7c3085;
+    --pr-color-slack-primary-active: #893d96;
+    --pr-color-slack-primary-border: #9d4db0;
+
+    /* Status colors */
+    --pr-color-danger: #f85149;
+    --pr-color-danger-hover: #ff6a65;
+    --pr-color-danger-active: #ff7b72;
+    --pr-color-success: #3fb950;
+    --pr-color-success-hover: #46c25a;
+    --pr-color-success-active: #4fd364;
+    --pr-color-warning: #d29922;
+    --pr-color-warning-hover: #e0a93e;
+    --pr-color-warning-active: #eac54f;
+    --pr-color-info: #58a6ff;
+    --pr-color-info-hover: #79b8ff;
+    --pr-color-info-active: #a5d6ff;
+    --pr-color-success-text: #3fb950;
+    --pr-color-success-background: rgba(46, 160, 67, 0.1);
+    --pr-color-error-text: #f85149;
+    --pr-color-error-background: rgba(248, 81, 73, 0.1);
+    --pr-color-warning-text: #d29922;
+    --pr-color-warning-background: rgba(187, 128, 9, 0.1);
+    --pr-color-info-text: #58a6ff;
+    --pr-color-info-background: rgba(56, 139, 253, 0.1);
+
+    /* color-scheme: dark; */
+  }
+}

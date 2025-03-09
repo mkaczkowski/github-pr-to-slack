@@ -1,0 +1,64 @@
+.content {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: var(--pr-color-background-primary);
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.messagePreview {
+  background-color: var(--pr-color-background-secondary);
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.previewTitle {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--pr-color-text-primary);
+}
+
+.previewContent {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pr-color-text-secondary);
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.checkboxGroup input[type="checkbox"] {
+  margin-right: 8px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 3px;
+}
+
+.checkboxGroup label {
+  margin-bottom: 0;
+  font-weight: normal;
+  color: var(--pr-color-text-primary);
+} 

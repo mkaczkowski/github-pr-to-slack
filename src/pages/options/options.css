@@ -1,0 +1,468 @@
+/* Options page styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--pr-color-background-secondary);
+  color: var(--pr-color-text-primary);
+  line-height: 1.5;
+}
+
+.options-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: var(--pr-color-background-primary);
+  border-radius: 8px;
+  box-shadow: var(--pr-shadow-medium);
+  overflow: hidden;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.options-header {
+  padding: 20px 30px;
+  background-color: var(--pr-color-slack-primary);
+  color: white;
+  border-bottom: 1px solid var(--pr-color-border-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.options-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.options-header p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+}
+
+/* Add specific styles for the theme switcher in the header */
+.options-header .themeSwitcher {
+  margin-bottom: 0;
+}
+
+.options-header .select {
+  background-color: white;
+  color: var(--pr-color-slack-primary);
+  border-color: transparent;
+}
+
+.options-header .select:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.options-header .select:focus {
+  border-color: white;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.options-header .label {
+  color: white;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  font-size: 16px;
+  color: var(--pr-color-text-secondary);
+}
+
+.options-form {
+  padding: 20px 30px;
+}
+
+.option-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+}
+
+.option-section:last-of-type {
+  margin-bottom: 10px;
+}
+
+.option-section h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pr-color-text-primary);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--pr-color-border-primary);
+}
+
+.section-description {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--pr-color-text-secondary);
+  font-size: 14px;
+}
+
+.option-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--pr-color-text-primary);
+}
+
+input[type='text'],
+input[type='password'] {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: var(--pr-color-background-input);
+  color: var(--pr-color-text-primary);
+}
+
+input[type='text']:focus,
+input[type='password']:focus {
+  outline: none;
+  border-color: var(--pr-color-border-focus);
+  box-shadow: var(--pr-shadow-focus-input);
+}
+
+input.error {
+  border-color: var(--pr-color-border-danger);
+}
+
+.error-message {
+  color: var(--pr-color-text-danger);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.help-text {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--pr-color-text-secondary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--pr-color-border-primary);
+}
+
+.save-button {
+  background-color: var(--pr-color-slack-primary);
+  color: white;
+  border: 1px solid var(--pr-color-slack-primary-dark);
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.save-button:hover {
+  background-color: var(--pr-color-slack-primary-hover);
+  border-color: var(--pr-color-slack-primary-border);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.save-button:active {
+  background-color: var(--pr-color-slack-primary-active);
+  border-color: var(--pr-color-slack-primary-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Add loading animation for the button */
+.save-button.loading {
+  padding-left: 44px;
+}
+
+.save-button.loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.status-message {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #e7f3fe;
+  color: #174ea6;
+  border-left: 4px solid #4285f4;
+  margin: 20px 20px 0px;
+}
+
+.status-message.success {
+  background-color: #e6f4ea;
+  color: #137333;
+  border-left-color: #34a853;
+}
+
+.status-message.error {
+  background-color: #fce8e6;
+  color: #c5221f;
+  border-left-color: #ea4335;
+}
+
+.options-footer {
+  padding: 4px 30px;
+  background-color: var(--pr-color-background-secondary);
+  border-top: 1px solid var(--pr-color-border-primary);
+  text-align: center;
+  font-size: 14px;
+  color: var(--pr-color-text-secondary);
+}
+
+/* Make the form more responsive */
+@media (max-width: 720px) {
+  .options-container {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .options-header,
+  .options-form,
+  .options-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .options-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .options-header h1 {
+    margin-bottom: 16px;
+  }
+}
+
+/* General button styling */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  border: none;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.button-primary {
+  background-color: #4a154b;
+  color: white;
+}
+
+.button-primary:hover {
+  background-color: #611f69;
+}
+
+.button-primary:active {
+  background-color: #3e1240;
+}
+
+.button-secondary {
+  background-color: #f4f4f4;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.button-secondary:hover {
+  background-color: #e9e9e9;
+}
+
+.button-secondary:active {
+  background-color: #ddd;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button.loading {
+  position: relative;
+  padding-left: 40px;
+}
+
+/* Make the loading indicator more GitHub-like */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #6a737d;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.button.loading .loading-indicator {
+  position: absolute;
+  left: 15px;
+}
+
+/* Status messages */
+.slack-status-message {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: message-appear 0.25s ease-out;
+  font-size: 14px;
+}
+
+.status-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-text {
+  line-height: 1.4;
+}
+
+.status-close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 4px;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-close-button:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.slack-status-message.success {
+  background-color: #ecf9ec;
+  border: 1px solid #cdedd8;
+  color: #206d38;
+}
+
+.slack-status-message.success .status-close-button {
+  color: #206d38;
+}
+
+.slack-status-message.error {
+  background-color: #fbeae5;
+  border: 1px solid #f5cdcd;
+  color: #a72926;
+}
+
+.slack-status-message.error .status-close-button {
+  color: #a72926;
+}
+
+.slack-status-message.warning {
+  background-color: #fcf8e3;
+  border: 1px solid #faebcc;
+  color: #8a6d3b;
+}
+
+.slack-status-message.warning .status-close-button {
+  color: #8a6d3b;
+}
+
+.slack-status-message.info {
+  background-color: #e7f5fd;
+  border: 1px solid #c7e8fa;
+  color: #2c619e;
+}
+
+.slack-status-message.info .status-close-button {
+  color: #2c619e;
+}
+
+@keyframes message-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Keep existing options.css status-message styles for backward compatibility */
+.status-message {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #e7f3fe;
+  color: #174ea6;
+  border-left: 4px solid #4285f4;
+}
+
+.status-message.success {
+  background-color: #e6f4ea;
+  color: #137333;
+  border-left-color: #34a853;
+}
+
+.status-message.error {
+  background-color: #fce8e6;
+  color: #c5221f;
+  border-left-color: #ea4335;
+}

@@ -1,0 +1,103 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  border-radius: 4px;
+  appearance: none;
+  gap: 8px;
+}
+
+.primary {
+  color: var(--pr-color-text-inverse);
+  background-color: var(--pr-color-background-button-primary);
+  box-shadow: var(--pr-shadow-small);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--pr-color-background-button-primary-hover);
+  box-shadow: var(--pr-shadow-medium);
+  text-decoration: none;
+}
+
+.primary:active:not(:disabled) {
+  background-color: var(--pr-color-background-button-primary-active);
+  box-shadow: var(--pr-shadow-small-pressed);
+}
+
+.secondary {
+  color: var(--pr-color-text-primary);
+  background-color: var(--pr-color-background-tertiary);
+  border: 1px solid var(--pr-color-border-primary);
+  box-shadow: var(--pr-shadow-secondary);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--pr-color-background-secondary);
+  box-shadow: var(--pr-shadow-secondary-hover);
+}
+
+.secondary:active:not(:disabled) {
+  background-color: var(--pr-color-background-button-active);
+  box-shadow: var(--pr-shadow-secondary-pressed);
+}
+
+.danger {
+  color: var(--pr-color-text-inverse);
+  background-color: var(--pr-color-background-button-danger);
+  box-shadow: var(--pr-shadow-small);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--pr-color-background-button-danger-hover);
+  box-shadow: var(--pr-shadow-medium);
+}
+
+.danger:active:not(:disabled) {
+  background-color: var(--pr-color-background-button-danger-active);
+  box-shadow: var(--pr-shadow-small-pressed);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.loading {
+  position: relative;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--pr-color-text-inverse);
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+}
+
+.secondary .spinner {
+  border: 2px solid rgba(201, 209, 217, 0.3);
+  border-top-color: var(--pr-color-text-primary);
+}
+
+.textWithSpinner {
+  margin-left: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+} 

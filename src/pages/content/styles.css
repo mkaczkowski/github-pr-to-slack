@@ -1,0 +1,42 @@
+
+/* Slack button styles - These are used by the injected button in GitHub */
+.slack-button-container {
+  display: inline-flex;
+}
+
+.slack-button-container > * {
+  margin-right: 2px;
+}
+
+.slack-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  border-radius: 4px;
+  appearance: none;
+  color: var(--pr-color-white);
+  background-color: var(--pr-color-slack-primary);
+  box-shadow: var(--pr-shadow-small);
+  gap: 8px;
+  
+}
+
+.slack-button:hover {
+  background-color: var(--pr-color-slack-primary-hover);
+  box-shadow: var(--pr-shadow-medium);
+  text-decoration: none;
+}
+
+.slack-button:active {
+  background-color: var(--pr-color-slack-primary-active);
+  box-shadow: var(--pr-shadow-small-pressed);
+}

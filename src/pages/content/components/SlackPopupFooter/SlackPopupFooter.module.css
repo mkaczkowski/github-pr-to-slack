@@ -1,0 +1,9 @@
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--pr-color-background-secondary);
+  border-top: 1px solid var(--pr-color-border-primary);
+  z-index: 1;
+} 
