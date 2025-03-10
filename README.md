@@ -41,7 +41,7 @@ This extension adds a convenient "Send to Slack" button to GitHub pull request p
 
 ### From Chrome Web Store
 
-1. Visit the [GitHub PR to Slack](https://chrome.google.com/webstore/detail/github-pr-to-slack/your-extension-id) extension page in the Chrome Web Store
+1. Visit the [GitHub PR to Slack](https://chromewebstore.google.com/detail/send-pr-to-slack/jplkdpbembjnkfffcfjjihiboldoneef) extension page in the Chrome Web Store
 2. Click "Add to Chrome" to install the extension
 3. The extension will be automatically installed and ready to use
 
