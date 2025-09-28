@@ -218,7 +218,7 @@ export function setupLocationMock(url: string) {
 /**
  * Create a portal root element for React portals
  */
-export function createPortalRoot(id: string = 'slack-popup-root') {
+export function createPortalRoot(id = 'slack-popup-root') {
   const portalRoot = document.createElement('div');
   portalRoot.setAttribute('id', id);
   document.body.appendChild(portalRoot);

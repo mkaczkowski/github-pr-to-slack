@@ -4,16 +4,7 @@
 
 import { debug } from './chrome-polyfill';
 import { getSlackWebhookUrl } from './storage';
-
-interface PRInfo {
-  title: string;
-  url: string;
-  reviewers?: string[];
-  loc?: string[];
-  author?: string;
-  number?: string;
-  repo?: string;
-}
+import { PRInfo, getPRFormattingData } from './pr';
 
 interface SlackMessage {
   text: string;
@@ -29,26 +20,20 @@ interface SlackResponse {
  * Format PR information for Slack message
  */
 export const formatSlackMessage = (prInfo: PRInfo, customMessage = ''): SlackMessage => {
-  const { title, url, reviewers = [], loc = [] } = prInfo;
+  const { title, url } = prInfo;
+  const { locText, sanitizedReviewers, sanitizedAuthor } = getPRFormattingData(prInfo);
 
-  // Format reviewers if available
   const assignedText =
-    reviewers.length > 0
-      ? `\nassigned: ${reviewers
-          .map((reviewer) => {
-            // Remove dots, @ symbols, and other special characters
-            const sanitizedName = reviewer.replace(/[.@]/g, '').replace(/[^a-zA-Z0-9_-]/g, '');
-            return `<@${sanitizedName}>`;
-          })
-          .join(', ')}`
+    sanitizedReviewers.length > 0
+      ? `\nassigned: ${sanitizedReviewers.map((reviewer) => `<@${reviewer}>`).join(', ')}`
       : '';
 
-  // Add custom message if provided
+  const authorText = sanitizedAuthor ? `\nauthor: <@${sanitizedAuthor}>` : '';
+
   const customMessageText = customMessage ? `\n${customMessage}` : '';
-  const locText = loc.length > 0 ? ` (${loc.join(', ')})` : '';
 
   return {
-    text: `*${title}*${locText}\n<${url}>${assignedText}${customMessageText}`,
+    text: `*${title}*${locText}\n<${url}>${authorText}${assignedText}${customMessageText}`,
   };
 };
 

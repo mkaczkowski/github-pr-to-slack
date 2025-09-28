@@ -1,16 +1,7 @@
 // Define the PR information interface
 import { debug } from './chrome-polyfill';
 import { getGitHubHost } from './storage';
-
-interface PRInfo {
-  title: string;
-  url: string;
-  reviewers?: string[];
-  loc?: string[];
-  author?: string;
-  number?: string;
-  repo?: string;
-}
+import { PRInfo } from './pr';
 
 /**
  * Check if the given URL is a supported site (GitHub PR page)
@@ -129,6 +120,14 @@ export const extractPRInfo = (): PRInfo => {
       );
     });
 
+    const authorElement =
+      (document.querySelector('.timeline-comment-header-text .author') as HTMLElement | null) ||
+      (document.querySelector('a.author') as HTMLElement | null) ||
+      (document.querySelector('span.author') as HTMLElement | null);
+
+    const authorText = authorElement?.textContent?.trim();
+    const author = authorText ? authorText.replace(/^@/, '') : undefined;
+
     const loc =
       document
         .querySelector('.diffstat')
@@ -141,6 +140,7 @@ export const extractPRInfo = (): PRInfo => {
       url: prUrl,
       loc,
       reviewers,
+      author,
     };
   } catch (error) {
     debug.error('GitHub', 'Error extracting PR info', error);

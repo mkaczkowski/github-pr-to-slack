@@ -1,16 +1,7 @@
 import { useState, useCallback } from 'react';
 import { extractPRInfo } from '../../../utils/github';
 import { debug } from '../../../utils/chrome-polyfill';
-
-interface PRInfo {
-  title: string;
-  url: string;
-  reviewers?: string[];
-  loc?: string[];
-  author?: string;
-  number?: string;
-  repo?: string;
-}
+import { PRInfo, formatPRPreviewMessage } from '../../../utils/pr';
 
 export const useGithubPR = () => {
   const [prInfo] = useState<PRInfo | null>(() => {
@@ -29,19 +20,7 @@ export const useGithubPR = () => {
       return 'Please enter your message here...';
     }
 
-    const { title, url, reviewers = [], loc = [] } = prInfo;
-
-    let preview = `*${title}*`;
-
-    if (loc.length > 0) {
-      preview += ` (${loc.join(', ')})`;
-    }
-
-    preview += `\n${url}`;
-
-    if (reviewers.length > 0) {
-      preview += `\nassigned: ${reviewers.map((reviewer) => `@${reviewer.replace(/[^a-zA-Z0-9_-]/g, '')}`).join(', ')}`;
-    }
+    const preview = formatPRPreviewMessage(prInfo);
 
     return preview || 'Please enter your message here...'; // Fallback if preview is empty
   }, [prInfo]); // Only depend on prInfo

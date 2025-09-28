@@ -263,12 +263,12 @@ input.error {
     padding-left: 20px;
     padding-right: 20px;
   }
-  
+
   .options-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .options-header h1 {
     margin-bottom: 16px;
   }

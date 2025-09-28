@@ -58,6 +58,21 @@ describe('Slack Utilities', () => {
       expect(message.text).toContain('assigned: <@user1>, <@user2>');
     });
 
+    it('should include the author line before the assigned line when provided', () => {
+      const prInfo = {
+        title: 'Test PR Title',
+        url: 'https://github.com/user/repo/pull/123',
+        author: 'author.name',
+        reviewers: ['reviewer'],
+      };
+
+      const message = formatSlackMessage(prInfo);
+
+      expect(message.text).toContain('author: <@authorname>');
+      expect(message.text).toContain('assigned: <@reviewer>');
+      expect(message.text.indexOf('author:')).toBeLessThan(message.text.indexOf('assigned:'));
+    });
+
     it('should sanitize reviewer names', () => {
       const prInfo = {
         title: 'Test PR Title',
@@ -70,6 +85,18 @@ describe('Slack Utilities', () => {
       // Should strip special characters
       expect(message.text).toContain('<@username>');
       expect(message.text).toContain('<@useremailcom>');
+    });
+
+    it('should sanitize author name when provided', () => {
+      const prInfo = {
+        title: 'Test PR Title',
+        url: 'https://github.com/user/repo/pull/123',
+        author: 'author.email@example.com',
+      };
+
+      const message = formatSlackMessage(prInfo);
+
+      expect(message.text).toContain('author: <@authoremailexamplecom>');
     });
 
     it('should include lines of code changes when provided', () => {

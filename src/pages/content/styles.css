@@ -1,4 +1,3 @@
-
 /* Slack button styles - These are used by the injected button in GitHub */
 .slack-button-container {
   display: inline-flex;
@@ -27,7 +26,6 @@
   background-color: var(--pr-color-slack-primary);
   box-shadow: var(--pr-shadow-small);
   gap: 8px;
-  
 }
 
 .slack-button:hover {

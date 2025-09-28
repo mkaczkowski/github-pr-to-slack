@@ -14,7 +14,7 @@
   --pr-color-text-attention: #9a6700;
 
   /* Background colors */
-  
+
   --pr-color-background-primary: #ffffff;
   --pr-color-background-secondary: #f6f8fa;
   --pr-color-background-tertiary: #f3f4f6;
@@ -80,9 +80,9 @@
   /* Slack specific colors */
   --pr-color-slack-primary: #611f69;
   --pr-color-slack-primary-dark: #4a154b;
-  --pr-color-slack-primary-hover: #7A2B7D;
-  --pr-color-slack-primary-active: #8D3391;
-  --pr-color-slack-primary-border: #B44AC0;
+  --pr-color-slack-primary-hover: #7a2b7d;
+  --pr-color-slack-primary-active: #8d3391;
+  --pr-color-slack-primary-border: #b44ac0;
 
   /* Slack logo colors */
   --pr-color-slack-logo-red: #e01e5a;

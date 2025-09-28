@@ -175,6 +175,22 @@ describe('GitHub Utilities', () => {
       expect(prInfo.reviewers).toEqual(['reviewer1', 'reviewer2']);
     });
 
+    it('should extract PR author', () => {
+      (document.querySelector as any).mockImplementation((selector) => {
+        if (selector === '.js-issue-title') {
+          return { textContent: 'Test PR Title' };
+        }
+        if (selector === '.timeline-comment-header-text .author') {
+          return { textContent: 'author.name' };
+        }
+        return null;
+      });
+
+      const prInfo = extractPRInfo();
+
+      expect(prInfo.author).toBe('author.name');
+    });
+
     it('should extract lines of code changes', () => {
       // Mock PR title element
       (document.querySelector as any).mockImplementation((selector) => {

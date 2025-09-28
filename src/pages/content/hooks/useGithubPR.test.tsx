@@ -100,6 +100,27 @@ describe('useGithubPR Hook', () => {
       expect(previewMessage).toContain('assigned: @user1, @user2');
     });
 
+    it('should include author in the preview message', () => {
+      // Mock PR info with author
+      const mockPRInfo = {
+        title: 'Test PR Title',
+        url: 'https://github.com/user/repo/pull/123',
+        author: 'author.name',
+      };
+
+      // Setup mock implementation
+      (extractPRInfo as any).mockReturnValue(mockPRInfo);
+
+      // Render the hook
+      const { result } = renderHook(() => useGithubPR());
+
+      // Generate preview message
+      const previewMessage = result.current.generatePreviewMessage();
+
+      // Verify the preview message includes sanitized author
+      expect(previewMessage).toContain('author: @authorname');
+    });
+
     it('should include lines of code changes in the preview message', () => {
       // Mock PR info with loc
       const mockPRInfo = {

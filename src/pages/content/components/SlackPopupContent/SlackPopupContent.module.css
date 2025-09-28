@@ -51,7 +51,7 @@
   margin-bottom: 8px;
 }
 
-.checkboxGroup input[type="checkbox"] {
+.checkboxGroup input[type='checkbox'] {
   margin-right: 8px;
   border: 1px solid var(--pr-color-border-primary);
   border-radius: 3px;
@@ -61,4 +61,4 @@
   margin-bottom: 0;
   font-weight: normal;
   color: var(--pr-color-text-primary);
-} 
+}

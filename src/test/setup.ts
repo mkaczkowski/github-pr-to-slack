@@ -33,7 +33,7 @@ class IntersectionObserverMock implements IntersectionObserver {
   }
   callback: IntersectionObserverCallback;
   root: Element | Document | null = null;
-  rootMargin: string = '0px';
+  rootMargin = '0px';
   thresholds: ReadonlyArray<number> = [0];
   observe = vi.fn();
   unobserve = vi.fn();

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { debug } from '../../../utils/chrome-polyfill';
 import { withErrorHandling } from '../../../utils/errorHandler';
 import { getStoredChannel, storeChannel } from '../../../utils/storage';
+import { wrapSlackMentions } from '../../../utils/pr';
 
 export interface SlackStatusMessage {
   text: string;
@@ -72,8 +73,8 @@ export const useSlack = () => {
         };
       }
 
-      // Add <> around @mentions for Slack formatting
-      const formattedMessage = data.message.replace(/@([a-zA-Z0-9_-]+)/g, '<@$1>');
+      // Add <> around @mentions for Slack formatting using shared sanitizer
+      const formattedMessage = wrapSlackMentions(data.message);
 
       const result = await chrome.runtime.sendMessage({
         message: 'sendToSlack',

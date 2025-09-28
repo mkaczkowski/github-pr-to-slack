@@ -1,14 +1,3 @@
-// Define PR information structure
-interface PRInfo {
-  title: string;
-  url: string;
-  reviewers?: string[];
-  loc?: string[];
-  author?: string;
-  number?: string;
-  repo?: string;
-}
-
 // Define status message structure
 interface StatusMessage {
   text: string;
