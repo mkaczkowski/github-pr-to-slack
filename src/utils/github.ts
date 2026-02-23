@@ -111,14 +111,12 @@ export const extractPRInfo = (): PRInfo => {
 
     // Get PR reviewers
     const reviewers = Array.from(
-      document.querySelectorAll(".js-issue-sidebar-form[aria-label='Select reviewers'] .avatar-user"),
-    )?.map((reviewer) => {
-      return (
-        (reviewer as HTMLElement).getAttribute('alt') ||
-        (reviewer as HTMLElement).getAttribute('aria-label') ||
-        'Unknown Reviewer'
-      );
-    });
+      document.querySelectorAll(
+        ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee",
+      ),
+    )
+      .map((link) => link.textContent?.trim())
+      .filter((name): name is string => !!name);
 
     const authorElement =
       (document.querySelector('.timeline-comment-header-text .author') as HTMLElement | null) ||
