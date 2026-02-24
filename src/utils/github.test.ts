@@ -159,13 +159,12 @@ describe('GitHub Utilities', () => {
         return null;
       });
 
-      // Mock reviewers
       (document.querySelectorAll as any).mockImplementation((selector) => {
-        if (selector === ".js-issue-sidebar-form[aria-label='Select reviewers'] .avatar-user") {
-          return [
-            { getAttribute: (attr) => (attr === 'alt' ? 'reviewer1' : null) },
-            { getAttribute: (attr) => (attr === 'aria-label' ? 'reviewer2' : null) },
-          ];
+        if (
+          selector ===
+          ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee"
+        ) {
+          return [{ textContent: 'reviewer1' }, { textContent: 'reviewer2' }];
         }
         return [];
       });
