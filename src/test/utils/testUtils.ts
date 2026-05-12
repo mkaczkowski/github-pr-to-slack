@@ -8,7 +8,7 @@ export const TEST_CONSTANTS = {
   GITHUB_HOST: 'github.company.com',
   SLACK_WEBHOOK_URL: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
   UPDATED_SLACK_WEBHOOK_URL: 'https://hooks.slack.com/services/T00000000/B11111111/YYYYYYYYYYYYYYYYYYYYYYYY',
-  DEFAULT_CHANNEL: '#general',
+  DEFAULT_WEBHOOK_NAME: 'Default',
   PR_TITLE: 'Test PR Title',
   PR_URL: 'https://github.com/user/repo/pull/123',
   PR_REVIEWERS: ['user1', 'user2'],

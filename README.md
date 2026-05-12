@@ -22,9 +22,10 @@ This extension adds a convenient "Send to Slack" button to GitHub pull request p
 ## Key Features
 
 - One-click sharing of GitHub PRs to any Slack channel
+- Manage multiple Slack webhooks side-by-side and pick a destination from a dropdown at send time
 - Works with both GitHub.com and GitHub Enterprise installations
 - Customizable messages to add context when sharing PRs
-- Remembers your last used Slack channel for faster sharing
+- Remembers the last webhook you used for faster sharing
 - Clean, intuitive interface that integrates seamlessly with GitHub's design
 - Comprehensive PR information including title, URL, reviewers, and code changes
 - Dark mode support that matches your GitHub theme preference
@@ -34,7 +35,7 @@ This extension adds a convenient "Send to Slack" button to GitHub pull request p
 1. Navigate to any GitHub pull request page
 2. Enable the extension by clicking the icon in your browser toolbar
 3. Click the "Send to Slack" button that appears in the PR header
-4. Select your Slack channel and add modify the default message if needed
+4. Pick the webhook you want to post to and tweak the default message if needed
 5. Click "Send" to instantly share the PR with your team
 
 ## Installation
@@ -55,12 +56,15 @@ This extension adds a convenient "Send to Slack" button to GitHub pull request p
 
 ## Setup
 
-Before using the extension, you'll need to configure it with your Slack webhook URL:
+Before using the extension, you'll need to add at least one Slack webhook in the options page:
 
 1. Click the extension icon in your browser toolbar
 2. Select "Options"
-3. Enter your Slack webhook URL (obtained from your Slack workspace admin)
-4. Optionally configure GitHub Enterprise domain if needed
+3. Under "Slack Webhooks", enter a short **name** (used as the label in the popup's dropdown) and the **webhook URL** for that channel
+4. Click "Add webhook" to add more destinations — each webhook posts to the channel it was created for in Slack
+5. Optionally configure a GitHub Enterprise domain
+
+Settings auto-save as you type; validation errors appear inline.
 
 > **Important**: Due to Chrome's security model and the extension's use of the `activeTab` permission, you must click on the extension icon at least once after installation to grant it permission to access GitHub pages. This is required for the "Send to Slack" button to appear on PR pages.
 
@@ -72,8 +76,8 @@ Before using the extension, you'll need to configure it with your Slack webhook 
 4. Navigate to "Incoming Webhooks" in the sidebar
 5. Toggle "Activate Incoming Webhooks" to On
 6. Click "Add New Webhook to Workspace"
-7. Select the channel where notifications will be posted by default
-8. Copy the Webhook URL provided and paste it into the extension options
+7. Select the channel the webhook should post to — each webhook is bound to one channel
+8. Copy the Webhook URL and add it as a new entry in the extension options, giving it a recognizable name (e.g. `#frontend`, `#releases`)
 
 ## Privacy & Security
 
@@ -81,7 +85,7 @@ Before using the extension, you'll need to configure it with your Slack webhook 
 - No data is sent to any third-party servers
 - The extension only requests permissions necessary for its functionality:
   - `activeTab`: To interact with GitHub PR pages
-  - `storage`: To save your preferences and webhook URL
+  - `storage`: To save your preferences and webhook URLs
   - `scripting`: To inject the "Send to Slack" button
 - All communication with Slack happens directly from your browser
 - The extension does not track your browsing activity
@@ -106,9 +110,10 @@ Perfect for developers, QA engineers, and technical teams who use both GitHub an
 
 **Error sending to Slack**
 
-- Verify your webhook URL is correct in the extension options
+- Verify the selected webhook's URL is correct in the extension options
 - Check your internet connection
 - Ensure your Slack workspace allows incoming webhooks
+- If a webhook was deleted in Slack, remove or replace it in the extension options
 - Check if your Slack app has the necessary permissions
 
 **GitHub Enterprise not working**

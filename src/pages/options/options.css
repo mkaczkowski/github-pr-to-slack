@@ -109,6 +109,14 @@ body {
   margin-bottom: 15px;
 }
 
+.webhook-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 2fr auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 label {
   display: block;
   margin-bottom: 8px;

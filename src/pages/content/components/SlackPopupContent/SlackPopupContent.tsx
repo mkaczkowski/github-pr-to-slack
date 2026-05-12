@@ -1,10 +1,10 @@
-import React, { RefObject } from 'react';
+import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '../../../../components/Button/Button';
-import FormField from '../../../../components/FormField/FormField';
 import StatusMessage from '../../../../components/StatusMessage/StatusMessage';
 import TextArea from '../../../../components/TextArea/TextArea';
 import { SlackFormValues } from '../../types/form';
+import { SlackWebhook } from '../../../../types/webhook';
 import styles from './SlackPopupContent.module.css';
 
 interface SlackStatusMessage {
@@ -17,19 +17,20 @@ interface SlackPopupContentProps {
   setStatusMessage: React.Dispatch<React.SetStateAction<SlackStatusMessage>>;
   isConfigured: boolean;
   openOptions: () => void;
+  webhooks: SlackWebhook[];
 }
 
 /**
  * SlackPopupContent component for the content section of SlackPopup
  */
 export const SlackPopupContent: React.FC<SlackPopupContentProps> = React.memo(
-  ({ statusMessage, setStatusMessage, isConfigured, openOptions }) => {
-    // Get form context from react-hook-form
+  ({ statusMessage, isConfigured, openOptions, webhooks }) => {
     const {
       register,
-      watch,
       formState: { errors },
     } = useFormContext<SlackFormValues>();
+
+    const hasWebhooks = webhooks.length > 0;
 
     return (
       <div className={styles.content}>
@@ -40,10 +41,10 @@ export const SlackPopupContent: React.FC<SlackPopupContentProps> = React.memo(
           />
         )}
 
-        {!isConfigured && (
+        {(!isConfigured || !hasWebhooks) && (
           <div className={styles.formGroup}>
             <p>
-              You need to configure your Slack webhook URL before you can send messages.{' '}
+              You need to add at least one Slack webhook before you can send messages.{' '}
               <Button variant="secondary" onClick={openOptions}>
                 Open Options
               </Button>
@@ -51,19 +52,23 @@ export const SlackPopupContent: React.FC<SlackPopupContentProps> = React.memo(
           </div>
         )}
 
-        {isConfigured && (
+        {isConfigured && hasWebhooks && (
           <>
             <div className={styles.formGroup}>
-              <label htmlFor="channel">Channel or User</label>
-              <FormField
-                id="channel"
-                {...register('channel')}
-                error={errors.channel?.message}
-                // ref={channelInputRef}
-                inputProps={{
-                  placeholder: 'e.g. #general or @username',
-                }}
-              />
+              <label htmlFor="webhook-name">Webhook</label>
+              <select
+                id="webhook-name"
+                className={styles.select}
+                {...register('webhookName')}
+                aria-invalid={errors.webhookName ? 'true' : 'false'}
+              >
+                {webhooks.map((hook) => (
+                  <option key={hook.name} value={hook.name}>
+                    {hook.name}
+                  </option>
+                ))}
+              </select>
+              {errors.webhookName?.message && <div className={styles.errorMessage}>{errors.webhookName.message}</div>}
             </div>
 
             <div className={styles.formGroup}>
@@ -72,7 +77,6 @@ export const SlackPopupContent: React.FC<SlackPopupContentProps> = React.memo(
                 id="message"
                 {...register('message')}
                 error={errors.message?.message}
-                // ref={messageTextareaRef}
                 textareaProps={{
                   rows: 4,
                   placeholder: 'Enter your message here...',

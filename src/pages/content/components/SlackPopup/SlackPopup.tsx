@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useRef, ForwardedRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { debug } from '../../../../utils/chrome-polyfill';
+import { SlackWebhook } from '../../../../types/webhook';
 import { useGithubPR } from '../../hooks/useGithubPR';
 import { useSlack } from '../../hooks/useSlack';
 import { useUIHelpers } from '../../hooks/useUIHelpers';
@@ -20,18 +21,27 @@ interface SlackPopupProps {
  */
 export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) => {
   // Custom hooks
-  const { isConfigured, statusMessage, setStatusMessage, checkSlackConfig, loadStoredChannel, sendToSlack } =
-    useSlack();
+  const {
+    isConfigured,
+    statusMessage,
+    setStatusMessage,
+    checkSlackConfig,
+    loadWebhooks,
+    loadLastUsedWebhookName,
+    sendToSlack,
+  } = useSlack();
 
   const { prInfo, generatePreviewMessage } = useGithubPR();
 
   const { popupRef, copyToClipboard, openOptions, handleKeyDown } = useUIHelpers(onClose);
 
+  const [webhooks, setWebhooks] = useState<SlackWebhook[]>([]);
+
   // React Hook Form setup
   const methods = useForm<SlackFormValues>({
     resolver: zodResolver(slackFormSchema),
     defaultValues: {
-      channel: '',
+      webhookName: '',
       message: '',
     },
     mode: 'onChange', // Validate on change
@@ -58,14 +68,14 @@ export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) =>
 
         if (!isMounted) return;
 
-        // Get stored channel (asynchronous operation)
-        const storedChannelResult = await loadStoredChannel();
-        debug.log('SlackPopup', 'Stored channel:', storedChannelResult);
+        const [loadedWebhooks, lastUsedName] = await Promise.all([loadWebhooks(), loadLastUsedWebhookName()]);
         if (!isMounted) return;
 
-        // Set the channel value if we have one
-        if (typeof storedChannelResult === 'string' && storedChannelResult) {
-          setValue('channel', storedChannelResult);
+        setWebhooks(loadedWebhooks);
+
+        if (loadedWebhooks.length > 0) {
+          const preselected = loadedWebhooks.find((hook) => hook.name === lastUsedName)?.name ?? loadedWebhooks[0].name;
+          setValue('webhookName', preselected, { shouldValidate: true });
         }
 
         // Set the default message
@@ -87,7 +97,7 @@ export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) =>
     return () => {
       isMounted = false;
     };
-  }, [checkSlackConfig, loadStoredChannel, setValue, trigger, generatePreviewMessage]);
+  }, [checkSlackConfig, loadWebhooks, loadLastUsedWebhookName, setValue, trigger, generatePreviewMessage]);
 
   // Focus the SlackButton when the popup is opened and configured
   useEffect(() => {
@@ -117,7 +127,7 @@ export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) =>
 
     try {
       const result = await sendToSlack({
-        channel: data.channel,
+        webhookName: data.webhookName,
         message: data.message,
       });
 
@@ -183,6 +193,7 @@ export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) =>
               setStatusMessage={setStatusMessage}
               isConfigured={isConfigured}
               openOptions={openOptions}
+              webhooks={webhooks}
             />
 
             <SlackPopupFooter

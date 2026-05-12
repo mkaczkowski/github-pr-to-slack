@@ -107,76 +107,6 @@
   }
 }
 
-.gFdNSTydCZiLfHtvPYiv {
-  margin-bottom: 1rem;
-}
-
-.KRlYBJ_nO8h2QxwHjxuW {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--pr-color-text-primary);
-}
-
-._9wdN2CSlM0PoPHUji6M {
-  position: relative;
-}
-
-.TP1RKh4UlAZYTTztrgfn {
-  display: block;
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--pr-color-text-primary);
-  background-color: var(--pr-color-background-input);
-  border: 1px solid var(--pr-color-border-primary);
-  border-radius: 4px;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.TP1RKh4UlAZYTTztrgfn:focus {
-  border-color: var(--pr-color-border-focus);
-  outline: 0;
-  box-shadow: var(--pr-shadow-focus);
-}
-
-.TP1RKh4UlAZYTTztrgfn:hover:not(:focus):not(:disabled) {
-  border-color: var(--pr-color-border-hover);
-}
-
-.TP1RKh4UlAZYTTztrgfn:disabled {
-  background-color: var(--pr-color-background-input-disabled);
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.zfNCMqYlb5u6SFPLU1UI {
-  min-height: 80px;
-  resize: vertical;
-}
-
-.a5mLCq1HyjPvmbeNGxcq .KRlYBJ_nO8h2QxwHjxuW {
-  color: var(--pr-color-danger);
-}
-
-.a5mLCq1HyjPvmbeNGxcq .TP1RKh4UlAZYTTztrgfn,
-.a5mLCq1HyjPvmbeNGxcq .zfNCMqYlb5u6SFPLU1UI {
-  border-color: var(--pr-color-danger);
-}
-
-.a5mLCq1HyjPvmbeNGxcq .TP1RKh4UlAZYTTztrgfn:focus,
-.a5mLCq1HyjPvmbeNGxcq .zfNCMqYlb5u6SFPLU1UI:focus {
-  box-shadow: var(--pr-shadow-focus-danger);
-}
-
-.bA07LV43JzoAeTVRoJdo {
-  margin-top: 0.25rem;
-  font-size: 12px;
-  color: var(--pr-color-danger);
-}
-
 .b9AjaDWcM7PKRWwCjPLZ {
   display: flex;
   justify-content: space-between;
@@ -267,6 +197,29 @@
 
 .E0g_enZCUxXQcB2yTOVg {
   margin-bottom: 16px;
+}
+
+.nyYwFFKm7QTPodohVQCT {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 6px;
+  background-color: var(--pr-color-background-input);
+  color: var(--pr-color-text-primary);
+  box-sizing: border-box;
+}
+
+.nyYwFFKm7QTPodohVQCT:focus {
+  outline: none;
+  border-color: var(--pr-color-border-focus);
+  box-shadow: var(--pr-shadow-focus-input);
+}
+
+.QsWbaiGKRfJkG_FppAlY {
+  color: var(--pr-color-text-danger);
+  font-size: 13px;
+  margin-top: 6px;
 }
 
 .E0g_enZCUxXQcB2yTOVg label {

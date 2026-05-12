@@ -77,14 +77,21 @@ export function setupSlackMock(
   options: {
     isConfigured?: boolean;
     statusMessage?: { text: string; type: string };
-    storedChannel?: string;
+    webhooks?: Array<{ name: string; url: string }>;
+    lastUsedWebhookName?: string;
   } = {},
 ) {
-  const { isConfigured = true, statusMessage = { text: '', type: '' }, storedChannel = '#general' } = options;
+  const {
+    isConfigured = true,
+    statusMessage = { text: '', type: '' },
+    webhooks = [{ name: 'Default', url: 'https://hooks.slack.com/services/A/B/C' }],
+    lastUsedWebhookName = 'Default',
+  } = options;
 
   const mockSetStatusMessage = vi.fn();
   const mockCheckSlackConfig = vi.fn().mockResolvedValue(isConfigured);
-  const mockLoadStoredChannel = vi.fn().mockResolvedValue(storedChannel);
+  const mockLoadWebhooks = vi.fn().mockResolvedValue(webhooks);
+  const mockLoadLastUsedWebhookName = vi.fn().mockResolvedValue(lastUsedWebhookName);
   const mockSendToSlack = vi.fn().mockResolvedValue({ success: true });
 
   vi.mock('../../pages/content/hooks/useSlack', () => ({
@@ -93,7 +100,8 @@ export function setupSlackMock(
       statusMessage,
       setStatusMessage: mockSetStatusMessage,
       checkSlackConfig: mockCheckSlackConfig,
-      loadStoredChannel: mockLoadStoredChannel,
+      loadWebhooks: mockLoadWebhooks,
+      loadLastUsedWebhookName: mockLoadLastUsedWebhookName,
       sendToSlack: mockSendToSlack,
     })),
   }));
@@ -101,7 +109,8 @@ export function setupSlackMock(
   return {
     mockSetStatusMessage,
     mockCheckSlackConfig,
-    mockLoadStoredChannel,
+    mockLoadWebhooks,
+    mockLoadLastUsedWebhookName,
     mockSendToSlack,
   };
 }
@@ -133,47 +142,52 @@ export function setupUIHelpersMock() {
 export function setupStorageMock(
   options: {
     githubHost?: string;
-    slackWebhookUrl?: string;
+    webhooks?: Array<{ name: string; url: string }>;
     themePreference?: string;
-    storedChannel?: string;
+    lastUsedWebhookName?: string;
   } = {},
 ) {
   const {
     githubHost = 'github.com',
-    slackWebhookUrl = 'https://hooks.slack.com/services/xxx/yyy/zzz',
+    webhooks = [{ name: 'Default', url: 'https://hooks.slack.com/services/xxx/yyy/zzz' }],
     themePreference = 'system',
-    storedChannel = '#general',
+    lastUsedWebhookName = 'Default',
   } = options;
 
   const mockGetGitHubHost = vi.fn().mockResolvedValue(githubHost);
   const mockSaveGitHubHost = vi.fn().mockResolvedValue(undefined);
-  const mockGetSlackWebhookUrl = vi.fn().mockResolvedValue(slackWebhookUrl);
-  const mockSaveSlackWebhookUrl = vi.fn().mockResolvedValue(undefined);
+  const mockGetSlackWebhooks = vi.fn().mockResolvedValue(webhooks);
+  const mockSaveSlackWebhooks = vi.fn().mockResolvedValue(undefined);
+  const mockGetWebhookByName = vi
+    .fn()
+    .mockImplementation(async (name: string) => webhooks.find((entry) => entry.name === name));
   const mockGetThemePreference = vi.fn().mockResolvedValue(themePreference);
   const mockSaveThemePreference = vi.fn().mockResolvedValue(undefined);
-  const mockGetStoredChannel = vi.fn().mockResolvedValue(storedChannel);
-  const mockStoreChannel = vi.fn().mockResolvedValue(undefined);
+  const mockGetLastUsedWebhookName = vi.fn().mockResolvedValue(lastUsedWebhookName);
+  const mockStoreLastUsedWebhookName = vi.fn().mockResolvedValue(undefined);
 
   vi.mock('../../utils/storage', () => ({
     getGitHubHost: mockGetGitHubHost,
     saveGitHubHost: mockSaveGitHubHost,
-    getSlackWebhookUrl: mockGetSlackWebhookUrl,
-    saveSlackWebhookUrl: mockSaveSlackWebhookUrl,
+    getSlackWebhooks: mockGetSlackWebhooks,
+    saveSlackWebhooks: mockSaveSlackWebhooks,
+    getWebhookByName: mockGetWebhookByName,
     getThemePreference: mockGetThemePreference,
     saveThemePreference: mockSaveThemePreference,
-    getStoredChannel: mockGetStoredChannel,
-    storeChannel: mockStoreChannel,
+    getLastUsedWebhookName: mockGetLastUsedWebhookName,
+    storeLastUsedWebhookName: mockStoreLastUsedWebhookName,
   }));
 
   return {
     mockGetGitHubHost,
     mockSaveGitHubHost,
-    mockGetSlackWebhookUrl,
-    mockSaveSlackWebhookUrl,
+    mockGetSlackWebhooks,
+    mockSaveSlackWebhooks,
+    mockGetWebhookByName,
     mockGetThemePreference,
     mockSaveThemePreference,
-    mockGetStoredChannel,
-    mockStoreChannel,
+    mockGetLastUsedWebhookName,
+    mockStoreLastUsedWebhookName,
   };
 }
 
@@ -184,7 +198,7 @@ export function setupStorageMock(
 export function setupReactHookFormMock(defaultValues: Record<string, any> = {}) {
   const values = {
     message: 'Test message',
-    channel: '#general',
+    webhookName: 'Default',
     ...defaultValues,
   };
 
