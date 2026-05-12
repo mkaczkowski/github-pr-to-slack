@@ -1,17 +1,15 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSlack } from './useSlack';
 import { chromeMock } from '../../../test/mocks/chrome';
-import { getStoredChannel, storeChannel } from '../../../utils/storage';
+import { getLastUsedWebhookName, getSlackWebhooks, storeLastUsedWebhookName } from '../../../utils/storage';
 
-// Mock the storage module
 vi.mock('../../../utils/storage', () => ({
-  getStoredChannel: vi.fn(),
-  storeChannel: vi.fn(),
+  getLastUsedWebhookName: vi.fn(),
+  getSlackWebhooks: vi.fn(),
+  storeLastUsedWebhookName: vi.fn(),
 }));
 
-// Mock the chrome-polyfill module
 vi.mock('../../../utils/chrome-polyfill', () => ({
   debug: {
     log: vi.fn(),
@@ -19,10 +17,8 @@ vi.mock('../../../utils/chrome-polyfill', () => ({
   },
 }));
 
-// Mock the errorHandler module
 vi.mock('../../../utils/errorHandler', () => ({
   withErrorHandling: (fn: any, options: any) => {
-    // Simple implementation that just calls the function and handles errors
     return async (...args: any[]) => {
       try {
         return await fn(...args);
@@ -46,17 +42,14 @@ describe('useSlack Hook', () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    // Replace global chrome with our mock
     global.chrome = chromeMock as unknown as typeof chrome;
 
-    // Default mock for getStoredChannel
-    (getStoredChannel as any).mockResolvedValue('#general');
-
-    // Default mock for storeChannel
-    (storeChannel as any).mockResolvedValue(undefined);
+    (getLastUsedWebhookName as any).mockResolvedValue('frontend');
+    (getSlackWebhooks as any).mockResolvedValue([{ name: 'frontend', url: 'https://hooks.slack.com/services/A/B/C' }]);
+    (storeLastUsedWebhookName as any).mockResolvedValue(undefined);
   });
 
-  it('should initialize with default values', () => {
+  it('initializes with default values', () => {
     const { result } = renderHook(() => useSlack());
 
     expect(result.current.isConfigured).toBe(true);
@@ -64,8 +57,7 @@ describe('useSlack Hook', () => {
   });
 
   describe('checkSlackConfig', () => {
-    it('should set isConfigured to true when Slack is configured', async () => {
-      // Mock chrome.runtime.sendMessage to return configured: true
+    it('sets isConfigured to true when Slack is configured', async () => {
       chromeMock.runtime.sendMessage.mockResolvedValue({
         configured: true,
         success: true,
@@ -73,167 +65,158 @@ describe('useSlack Hook', () => {
 
       const { result } = renderHook(() => useSlack());
 
-      // Call checkSlackConfig
       await act(async () => {
         const isConfigured = await result.current.checkSlackConfig();
         expect(isConfigured).toBe(true);
       });
 
-      // Verify isConfigured state
       expect(result.current.isConfigured).toBe(true);
-
-      // Verify chrome.runtime.sendMessage was called correctly
       expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith({
         message: 'checkSlackConfig',
       });
     });
 
-    it('should set isConfigured to false and show warning when Slack is not configured', async () => {
-      // Mock chrome.runtime.sendMessage to return configured: false
+    it('sets isConfigured to false and shows warning when Slack is not configured', async () => {
       chromeMock.runtime.sendMessage.mockResolvedValue({
         configured: false,
         success: true,
-        message: 'Slack is not configured. Please go to extension options to set it up.',
       });
 
       const { result } = renderHook(() => useSlack());
 
-      // Call checkSlackConfig
       await act(async () => {
         const isConfigured = await result.current.checkSlackConfig();
         expect(isConfigured).toBe(false);
       });
 
-      // Verify isConfigured state
       expect(result.current.isConfigured).toBe(false);
-
-      // Verify statusMessage state
       expect(result.current.statusMessage).toEqual({
         text: 'Slack is not configured. Please go to extension options to set it up.',
         type: 'warning',
       });
     });
 
-    it('should handle errors during configuration check', async () => {
-      // Mock chrome.runtime.sendMessage to throw an error
+    it('handles errors during configuration check', async () => {
       chromeMock.runtime.sendMessage.mockRejectedValue(new Error('Network error'));
 
       const { result } = renderHook(() => useSlack());
 
-      // Call checkSlackConfig
       await act(async () => {
         const isConfigured = await result.current.checkSlackConfig();
         expect(isConfigured).toEqual({ success: false, error: 'Network error' });
       });
 
-      // Verify statusMessage state contains error
       expect(result.current.statusMessage.type).toBe('error');
       expect(result.current.statusMessage.text).toContain('Network error');
     });
   });
 
-  describe('loadStoredChannel', () => {
-    it('should load stored channel from storage', async () => {
-      // Mock getStoredChannel to return a channel
-      (getStoredChannel as any).mockResolvedValue('#testing');
+  describe('loadWebhooks', () => {
+    it('returns webhooks from storage', async () => {
+      const webhooks = [
+        { name: 'frontend', url: 'https://hooks.slack.com/services/A/B/C' },
+        { name: 'backend', url: 'https://hooks.slack.com/services/D/E/F' },
+      ];
+      (getSlackWebhooks as any).mockResolvedValue(webhooks);
 
       const { result } = renderHook(() => useSlack());
 
-      // Call loadStoredChannel
-      let channel;
+      let loaded;
       await act(async () => {
-        channel = await result.current.loadStoredChannel();
+        loaded = await result.current.loadWebhooks();
       });
 
-      // Verify getStoredChannel was called
-      expect(getStoredChannel).toHaveBeenCalled();
-
-      // Verify the returned channel
-      expect(channel).toBe('#testing');
+      expect(loaded).toEqual(webhooks);
     });
 
-    it('should handle errors when loading stored channel', async () => {
-      // Mock getStoredChannel to throw an error
-      (getStoredChannel as any).mockRejectedValue(new Error('Storage error'));
+    it('returns an empty list and surfaces an error when storage throws', async () => {
+      (getSlackWebhooks as any).mockRejectedValue(new Error('Storage error'));
 
       const { result } = renderHook(() => useSlack());
 
-      // Call loadStoredChannel
-      let response;
+      let loaded;
       await act(async () => {
-        response = await result.current.loadStoredChannel();
+        loaded = await result.current.loadWebhooks();
       });
 
-      // Verify error handling
-      expect(response).toEqual({ success: false, error: 'Storage error' });
-
-      // Verify statusMessage state contains error
+      expect(loaded).toEqual([]);
       expect(result.current.statusMessage.type).toBe('error');
-      expect(result.current.statusMessage.text).toContain('Storage error');
+    });
+  });
+
+  describe('loadLastUsedWebhookName', () => {
+    it('returns the stored webhook name', async () => {
+      (getLastUsedWebhookName as any).mockResolvedValue('backend');
+
+      const { result } = renderHook(() => useSlack());
+
+      let name;
+      await act(async () => {
+        name = await result.current.loadLastUsedWebhookName();
+      });
+
+      expect(name).toBe('backend');
+    });
+
+    it('returns empty string on failure', async () => {
+      (getLastUsedWebhookName as any).mockRejectedValue(new Error('Storage error'));
+
+      const { result } = renderHook(() => useSlack());
+
+      let name;
+      await act(async () => {
+        name = await result.current.loadLastUsedWebhookName();
+      });
+
+      expect(name).toBe('');
     });
   });
 
   describe('sendToSlack', () => {
-    it('should send message to Slack successfully', async () => {
-      // Mock chrome.runtime.sendMessage to return success
-      chromeMock.runtime.sendMessage.mockResolvedValue({
-        success: true,
-      });
+    it('sends message to Slack successfully', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue({ success: true });
 
       const { result } = renderHook(() => useSlack());
 
-      // Call sendToSlack
       let response;
       await act(async () => {
         response = await result.current.sendToSlack({
-          channel: '#general',
+          webhookName: 'frontend',
           message: 'Test message',
         });
       });
 
-      // Verify chrome.runtime.sendMessage was called correctly
       expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith({
         message: 'sendToSlack',
         data: {
-          channel: '#general',
-          message: {
-            text: 'Test message',
-          },
+          webhookName: 'frontend',
+          message: { text: 'Test message' },
         },
       });
 
-      // Verify the response
       expect(response).toEqual({ success: true });
-
-      // Verify statusMessage state shows success
       expect(result.current.statusMessage).toEqual({
         text: 'Message sent to Slack successfully!',
         type: 'success',
       });
     });
 
-    it('should store the channel after successful send', async () => {
-      // Mock chrome.runtime.sendMessage to return success
-      chromeMock.runtime.sendMessage.mockResolvedValue({
-        success: true,
-      });
+    it('stores the webhook name after a successful send', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue({ success: true });
 
       const { result } = renderHook(() => useSlack());
 
-      // Call sendToSlack
       await act(async () => {
         await result.current.sendToSlack({
-          channel: '#testing',
+          webhookName: 'backend',
           message: 'Test message',
         });
       });
 
-      // Verify storeChannel was called with the correct channel
-      expect(storeChannel).toHaveBeenCalledWith('#testing');
+      expect(storeLastUsedWebhookName).toHaveBeenCalledWith('backend');
     });
 
-    it('should handle errors when sending to Slack', async () => {
-      // Mock chrome.runtime.sendMessage to return an error
+    it('handles errors when sending to Slack', async () => {
       chromeMock.runtime.sendMessage.mockResolvedValue({
         success: false,
         error: 'Slack API error',
@@ -241,88 +224,66 @@ describe('useSlack Hook', () => {
 
       const { result } = renderHook(() => useSlack());
 
-      // Call sendToSlack
       let response;
       await act(async () => {
         response = await result.current.sendToSlack({
-          channel: '#general',
+          webhookName: 'frontend',
           message: 'Test message',
         });
       });
 
-      // Verify the response
-      expect(response).toEqual({
-        success: false,
-        error: 'Slack API error',
-      });
-
-      // Verify statusMessage state shows error
+      expect(response).toEqual({ success: false, error: 'Slack API error' });
       expect(result.current.statusMessage).toEqual({
         text: 'Error sending to Slack: Slack API error',
         type: 'error',
       });
-
-      // Verify storeChannel was not called
-      expect(storeChannel).not.toHaveBeenCalled();
+      expect(storeLastUsedWebhookName).not.toHaveBeenCalled();
     });
 
-    it('should handle network errors when sending to Slack', async () => {
-      // Mock chrome.runtime.sendMessage to throw an error
+    it('handles network errors when sending to Slack', async () => {
       chromeMock.runtime.sendMessage.mockRejectedValue(new Error('Network error'));
 
       const { result } = renderHook(() => useSlack());
 
-      // Call sendToSlack
       let response;
       await act(async () => {
         response = await result.current.sendToSlack({
-          channel: '#general',
+          webhookName: 'frontend',
           message: 'Test message',
         });
       });
 
-      // Verify error handling
       expect(response).toEqual({ success: false, error: 'Network error' });
-
-      // Verify statusMessage state contains error
       expect(result.current.statusMessage.type).toBe('error');
       expect(result.current.statusMessage.text).toContain('Network error');
     });
 
-    it('should format @mentions with <> when sending to Slack', async () => {
-      // Mock chrome.runtime.sendMessage to return success
-      chromeMock.runtime.sendMessage.mockResolvedValue({
-        success: true,
-      });
+    it('formats @mentions with <> when sending to Slack', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue({ success: true });
 
       const { result } = renderHook(() => useSlack());
 
-      // Call sendToSlack with a message containing @mentions
       await act(async () => {
         await result.current.sendToSlack({
-          channel: '#general',
+          webhookName: 'frontend',
           message: 'Please review @user1 and @user2',
         });
       });
 
-      // Verify chrome.runtime.sendMessage was called with properly formatted mentions
       expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith({
         message: 'sendToSlack',
         data: {
-          channel: '#general',
-          message: {
-            text: 'Please review <@user1> and <@user2>',
-          },
+          webhookName: 'frontend',
+          message: { text: 'Please review <@user1> and <@user2>' },
         },
       });
     });
   });
 
   describe('setStatusMessage', () => {
-    it('should update status message state', () => {
+    it('updates status message state', () => {
       const { result } = renderHook(() => useSlack());
 
-      // Call setStatusMessage
       act(() => {
         result.current.setStatusMessage({
           text: 'Test status message',
@@ -330,7 +291,6 @@ describe('useSlack Hook', () => {
         });
       });
 
-      // Verify statusMessage state
       expect(result.current.statusMessage).toEqual({
         text: 'Test status message',
         type: 'info',

@@ -3,6 +3,12 @@
  */
 
 import { debug } from './chrome-polyfill';
+import { SlackWebhook } from '../types/webhook';
+
+const WEBHOOKS_KEY = 'slackWebhooks';
+const LEGACY_WEBHOOK_URL_KEY = 'slackWebhookUrl';
+const LAST_USED_WEBHOOK_KEY = 'github-to-slack-last-webhook';
+const LEGACY_CHANNEL_KEY = 'github-to-slack-channel';
 
 /**
  * Get GitHub host from Chrome storage
@@ -51,93 +57,127 @@ export const saveGitHubHost = (host: string): Promise<void> => {
   });
 };
 
+const isWebhookArray = (value: unknown): value is SlackWebhook[] =>
+  Array.isArray(value) &&
+  value.every(
+    (entry) =>
+      entry &&
+      typeof entry === 'object' &&
+      typeof (entry as SlackWebhook).name === 'string' &&
+      typeof (entry as SlackWebhook).url === 'string',
+  );
+
 /**
- * Get Slack webhook URL from Chrome storage
+ * Get the list of configured Slack webhooks.
+ * Migrates the legacy single-webhook key (`slackWebhookUrl`) into a one-entry
+ * list on first read and clears the legacy key.
  */
-export const getSlackWebhookUrl = (): Promise<string> => {
-  debug.log('Storage', 'Getting Slack webhook URL from storage');
-  return new Promise<string>((resolve) => {
+export const getSlackWebhooks = (): Promise<SlackWebhook[]> => {
+  debug.log('Storage', 'Getting Slack webhooks from storage');
+  return new Promise<SlackWebhook[]>((resolve) => {
     try {
-      chrome.storage.sync.get('slackWebhookUrl', (result) => {
-        const webhookUrl = result.slackWebhookUrl || '';
+      chrome.storage.sync.get([WEBHOOKS_KEY, LEGACY_WEBHOOK_URL_KEY], (result) => {
+        const stored = result[WEBHOOKS_KEY];
+        if (isWebhookArray(stored) && stored.length > 0) {
+          resolve(stored);
+          return;
+        }
 
-        debug.log('Storage', 'Retrieved Slack webhook URL', {
-          url: webhookUrl ? '(set)' : '(empty)',
-        });
+        const legacyUrl = result[LEGACY_WEBHOOK_URL_KEY];
+        if (typeof legacyUrl === 'string' && legacyUrl.length > 0) {
+          const migrated: SlackWebhook[] = [{ name: 'Default', url: legacyUrl }];
+          debug.log('Storage', 'Migrating legacy slackWebhookUrl into slackWebhooks list');
+          chrome.storage.sync.set({ [WEBHOOKS_KEY]: migrated }, () => {
+            chrome.storage.sync.remove(LEGACY_WEBHOOK_URL_KEY, () => {
+              resolve(migrated);
+            });
+          });
+          return;
+        }
 
-        resolve(webhookUrl);
+        resolve([]);
       });
     } catch (error) {
-      debug.error('Storage', 'Exception retrieving Slack webhook URL', error);
-      resolve('');
+      debug.error('Storage', 'Exception retrieving Slack webhooks', error);
+      resolve([]);
     }
   });
 };
 
 /**
- * Save Slack webhook URL to Chrome storage
+ * Save the list of Slack webhooks to Chrome storage.
  */
-export const saveSlackWebhookUrl = (url: string): Promise<void> => {
+export const saveSlackWebhooks = (webhooks: SlackWebhook[]): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
     try {
-      debug.log('Storage', 'Calling chrome.storage.sync.set for Slack webhook URL');
-      chrome.storage.sync.set({ slackWebhookUrl: url }, () => {
+      debug.log('Storage', 'Saving Slack webhooks', { count: webhooks.length });
+      chrome.storage.sync.set({ [WEBHOOKS_KEY]: webhooks }, () => {
         if (chrome.runtime.lastError) {
           const error = chrome.runtime.lastError;
-          debug.error('Storage', 'Error saving Slack webhook URL', error);
+          debug.error('Storage', 'Error saving Slack webhooks', error);
           reject(error);
           return;
         }
-
-        // TODO remove
-        debug.log('Storage', 'Slack webhook URL saved successfully', url);
+        debug.log('Storage', 'Slack webhooks saved successfully');
         resolve();
       });
     } catch (error) {
-      debug.error('Storage', 'Exception saving Slack webhook URL', error);
+      debug.error('Storage', 'Exception saving Slack webhooks', error);
       reject(error);
     }
   });
 };
 
 /**
- * Get stored Slack channel from Chrome storage
+ * Look up a saved webhook by name.
  */
-export const getStoredChannel = (): Promise<string> => {
-  debug.log('Storage', 'Getting stored Slack channel from storage');
+export const getWebhookByName = async (name: string): Promise<SlackWebhook | undefined> => {
+  const webhooks = await getSlackWebhooks();
+  return webhooks.find((entry) => entry.name === name);
+};
+
+/**
+ * Get the last-used webhook name from Chrome storage.
+ * Ignores and clears the legacy `github-to-slack-channel` key if present.
+ */
+export const getLastUsedWebhookName = (): Promise<string> => {
+  debug.log('Storage', 'Getting last-used webhook name from storage');
   return new Promise<string>((resolve) => {
     try {
-      chrome.storage.sync.get('github-to-slack-channel', (result) => {
-        const channel = result['github-to-slack-channel'] || '';
-        debug.log('Storage', 'Retrieved stored Slack channel', { channel: channel || '(empty)' });
-        resolve(channel);
+      chrome.storage.sync.get([LAST_USED_WEBHOOK_KEY, LEGACY_CHANNEL_KEY], (result) => {
+        const name = result[LAST_USED_WEBHOOK_KEY] || '';
+        if (typeof result[LEGACY_CHANNEL_KEY] === 'string') {
+          chrome.storage.sync.remove(LEGACY_CHANNEL_KEY);
+        }
+        debug.log('Storage', 'Retrieved last-used webhook name', { name: name || '(empty)' });
+        resolve(name);
       });
     } catch (error) {
-      debug.error('Storage', 'Exception retrieving stored Slack channel', error);
+      debug.error('Storage', 'Exception retrieving last-used webhook name', error);
       resolve('');
     }
   });
 };
 
 /**
- * Store Slack channel in Chrome storage
+ * Save the last-used webhook name to Chrome storage.
  */
-export const storeChannel = (channel: string): Promise<void> => {
+export const storeLastUsedWebhookName = (name: string): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
     try {
-      debug.log('Storage', 'Saving Slack channel');
-      chrome.storage.sync.set({ 'github-to-slack-channel': channel }, () => {
+      debug.log('Storage', 'Saving last-used webhook name');
+      chrome.storage.sync.set({ [LAST_USED_WEBHOOK_KEY]: name }, () => {
         if (chrome.runtime.lastError) {
           const error = chrome.runtime.lastError;
-          debug.error('Storage', 'Error saving Slack channel', error);
+          debug.error('Storage', 'Error saving last-used webhook name', error);
           reject(error);
           return;
         }
-        debug.log('Storage', 'Slack channel saved successfully');
+        debug.log('Storage', 'Last-used webhook name saved successfully');
         resolve();
       });
     } catch (error) {
-      debug.error('Slack', 'Error storing channel', error);
+      debug.error('Storage', 'Error storing last-used webhook name', error);
       reject(error);
     }
   });

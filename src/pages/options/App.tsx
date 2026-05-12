@@ -1,25 +1,45 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import FormField from '../../components/FormField/FormField';
 import StatusMessage from '../../components/StatusMessage/StatusMessage';
-import { getGitHubHost, getSlackWebhookUrl, saveGitHubHost, saveSlackWebhookUrl } from '../../utils/storage';
+import { Button } from '../../components/Button/Button';
+import { getGitHubHost, getSlackWebhooks, saveGitHubHost, saveSlackWebhooks } from '../../utils/storage';
 import { cleanHostname, isValidGitHubHost, isValidSlackWebhookUrl } from '../../utils/validation';
 import { debug } from '../../utils/chrome-polyfill';
 import logo from '../../assets/logo48.png';
 
-// Define the form schema using Zod
-const formSchema = z.object({
-  githubHost: z.string().refine((val) => !val || isValidGitHubHost(val), {
-    message: 'Please enter a valid hostname (e.g. github.company.com)',
+const webhookSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  url: z.string().refine((val) => isValidSlackWebhookUrl(val), {
+    message: 'Please enter a valid Slack webhook URL',
   }),
-  slackWebhookUrl: z
-    .string()
-    .refine((val) => isValidSlackWebhookUrl(val), { message: 'Please enter a valid Slack webhook URL' }),
 });
 
-// Define the form data type from the schema
+const formSchema = z
+  .object({
+    githubHost: z.string().refine((val) => !val || isValidGitHubHost(val), {
+      message: 'Please enter a valid hostname (e.g. github.company.com)',
+    }),
+    webhooks: z.array(webhookSchema).min(1, 'Add at least one Slack webhook'),
+  })
+  .superRefine((data, ctx) => {
+    const seen = new Set<string>();
+    data.webhooks.forEach((hook, index) => {
+      const key = hook.name.trim().toLowerCase();
+      if (!key) return;
+      if (seen.has(key)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['webhooks', index, 'name'],
+          message: 'Webhook names must be unique',
+        });
+      }
+      seen.add(key);
+    });
+  });
+
 type FormData = z.infer<typeof formSchema>;
 
 interface FormSectionProps {
@@ -28,9 +48,6 @@ interface FormSectionProps {
   children: React.ReactNode;
 }
 
-/**
- * FormSection component for standardized form sections
- */
 export const FormSection: React.FC<FormSectionProps> = React.memo(({ title, description, children }) => {
   return (
     <section className="option-section">
@@ -43,56 +60,54 @@ export const FormSection: React.FC<FormSectionProps> = React.memo(({ title, desc
 
 FormSection.displayName = 'FormSection';
 
-/**
- * App component for the options page
- */
+const EMPTY_WEBHOOK = { name: '', url: '' };
+
 export const App: React.FC = React.memo(() => {
-  // Status message state
   const [statusMessage, setStatusMessage] = React.useState('');
   const [statusType, setStatusType] = React.useState<'success' | 'error' | 'warning' | ''>('');
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors, isDirty },
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       githubHost: '',
-      slackWebhookUrl: '',
+      webhooks: [EMPTY_WEBHOOK],
     },
     mode: 'onChange',
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'webhooks',
+  });
+
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // Clear status message
   const clearStatusMessage = (): void => {
     setStatusMessage('');
     setStatusType('');
   };
 
-  // Load settings from storage
   useEffect(() => {
     const loadSettings = async () => {
       try {
         setIsLoading(true);
 
-        // Load GitHub host
         const storedGitHubHost = await getGitHubHost();
+        const storedWebhooks = await getSlackWebhooks();
 
-        // Load Slack webhook URL
-        const storedSlackWebhookUrl = await getSlackWebhookUrl();
+        const initialWebhooks = storedWebhooks.length > 0 ? storedWebhooks : [EMPTY_WEBHOOK];
 
-        // Update form values
-        setValue('githubHost', storedGitHubHost || '', { shouldDirty: false });
-        setValue('slackWebhookUrl', storedSlackWebhookUrl || '', { shouldDirty: false });
-
-        // Reset form state
-        reset({ githubHost: storedGitHubHost || '', slackWebhookUrl: storedSlackWebhookUrl || '' });
+        reset({
+          githubHost: storedGitHubHost || '',
+          webhooks: initialWebhooks,
+        });
 
         clearStatusMessage();
       } catch (error) {
@@ -107,7 +122,6 @@ export const App: React.FC = React.memo(() => {
     loadSettings();
   }, [setValue, reset]);
 
-  // Handle form submission
   const onSubmit = React.useCallback(
     async (data: FormData) => {
       try {
@@ -116,16 +130,13 @@ export const App: React.FC = React.memo(() => {
 
         const cleanedHost = data.githubHost ? cleanHostname(data.githubHost) : '';
 
-        // Save settings
         await saveGitHubHost(cleanedHost);
-        await saveSlackWebhookUrl(data.slackWebhookUrl);
+        await saveSlackWebhooks(data.webhooks);
 
-        // Show success message
         setStatusMessage('Settings saved successfully');
         setStatusType('success');
 
-        // Reset form state
-        reset(data);
+        reset({ githubHost: cleanedHost, webhooks: data.webhooks });
       } catch (error) {
         debug.error('Options', 'Error saving settings', error);
         setStatusMessage(`Error saving settings: ${(error as Error).message || 'Unknown error'}`);
@@ -134,19 +145,22 @@ export const App: React.FC = React.memo(() => {
         setIsLoading(false);
       }
     },
-    [reset, clearStatusMessage],
+    [reset],
   );
 
-  // Auto-save when form values change
-  useEffect(() => {
-    if (isDirty) {
-      const timer = setTimeout(() => {
-        handleSubmit(onSubmit)();
-      }, 500);
+  const watchedValues = useWatch({ control });
 
-      return () => clearTimeout(timer);
-    }
-  }, [isDirty, handleSubmit, onSubmit]);
+  useEffect(() => {
+    if (!isDirty) return;
+
+    const timer = setTimeout(() => {
+      handleSubmit(onSubmit)();
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [watchedValues, isDirty, handleSubmit, onSubmit]);
+
+  const webhooksError = errors.webhooks && !Array.isArray(errors.webhooks) ? errors.webhooks.message : undefined;
 
   return (
     <div className="options-container">
@@ -194,19 +208,49 @@ export const App: React.FC = React.memo(() => {
           </FormSection>
 
           <FormSection
-            title="Slack Configuration"
-            description="Generate a webhook URL from your Slack workspace's App settings page."
+            title="Slack Webhooks"
+            description="Each webhook posts to the channel it was created for in Slack. Add one entry per destination."
           >
-            <FormField
-              id="slack-webhook"
-              label="Slack Webhook URL"
-              {...register('slackWebhookUrl')}
-              error={errors.slackWebhookUrl?.message}
-              inputProps={{
-                placeholder: 'https://hooks.slack.com/services/...',
-                disabled: isLoading,
-              }}
-            />
+            {fields.map((field, index) => (
+              <div key={field.id} className="webhook-row">
+                <FormField
+                  id={`webhook-name-${index}`}
+                  label={index === 0 ? 'Name' : undefined}
+                  {...register(`webhooks.${index}.name` as const)}
+                  error={errors.webhooks?.[index]?.name?.message}
+                  inputProps={{
+                    placeholder: 'e.g. #frontend',
+                    disabled: isLoading,
+                  }}
+                />
+                <FormField
+                  id={`webhook-url-${index}`}
+                  label={index === 0 ? 'Webhook URL' : undefined}
+                  {...register(`webhooks.${index}.url` as const)}
+                  error={errors.webhooks?.[index]?.url?.message}
+                  inputProps={{
+                    placeholder: 'https://hooks.slack.com/services/...',
+                    disabled: isLoading,
+                  }}
+                />
+                <Button
+                  variant="secondary"
+                  onClick={() => remove(index)}
+                  disabled={isLoading || fields.length === 1}
+                  aria-label={`Remove webhook ${index + 1}`}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+
+            {webhooksError && <div className="error-message">{webhooksError}</div>}
+
+            <div style={{ marginTop: '12px' }}>
+              <Button variant="secondary" onClick={() => append(EMPTY_WEBHOOK)} disabled={isLoading}>
+                Add webhook
+              </Button>
+            </div>
           </FormSection>
         </form>
       </main>

@@ -1,24 +1,28 @@
 import { vi } from 'vitest';
 import { TEST_CONSTANTS } from '../utils/testUtils';
 
-// Create mock functions
+const defaultWebhooks = [{ name: TEST_CONSTANTS.DEFAULT_WEBHOOK_NAME, url: TEST_CONSTANTS.SLACK_WEBHOOK_URL }];
+
 export const mockGetGitHubHost = vi.fn().mockResolvedValue(TEST_CONSTANTS.GITHUB_HOST);
 export const mockSaveGitHubHost = vi.fn().mockResolvedValue(undefined);
-export const mockGetSlackWebhookUrl = vi.fn().mockResolvedValue(TEST_CONSTANTS.SLACK_WEBHOOK_URL);
-export const mockSaveSlackWebhookUrl = vi.fn().mockResolvedValue(undefined);
+export const mockGetSlackWebhooks = vi.fn().mockResolvedValue(defaultWebhooks);
+export const mockSaveSlackWebhooks = vi.fn().mockResolvedValue(undefined);
+export const mockGetWebhookByName = vi
+  .fn()
+  .mockImplementation(async (name: string) => defaultWebhooks.find((entry) => entry.name === name));
 export const mockGetThemePreference = vi.fn().mockResolvedValue('system');
 export const mockSaveThemePreference = vi.fn().mockResolvedValue(undefined);
-export const mockGetStoredChannel = vi.fn().mockResolvedValue(TEST_CONSTANTS.DEFAULT_CHANNEL);
-export const mockStoreChannel = vi.fn().mockResolvedValue(undefined);
+export const mockGetLastUsedWebhookName = vi.fn().mockResolvedValue(TEST_CONSTANTS.DEFAULT_WEBHOOK_NAME);
+export const mockStoreLastUsedWebhookName = vi.fn().mockResolvedValue(undefined);
 
-// Setup mock for storage utilities
 vi.mock('../../utils/storage', () => ({
   getGitHubHost: mockGetGitHubHost,
   saveGitHubHost: mockSaveGitHubHost,
-  getSlackWebhookUrl: mockGetSlackWebhookUrl,
-  saveSlackWebhookUrl: mockSaveSlackWebhookUrl,
+  getSlackWebhooks: mockGetSlackWebhooks,
+  saveSlackWebhooks: mockSaveSlackWebhooks,
+  getWebhookByName: mockGetWebhookByName,
   getThemePreference: mockGetThemePreference,
   saveThemePreference: mockSaveThemePreference,
-  getStoredChannel: mockGetStoredChannel,
-  storeChannel: mockStoreChannel,
+  getLastUsedWebhookName: mockGetLastUsedWebhookName,
+  storeLastUsedWebhookName: mockStoreLastUsedWebhookName,
 }));

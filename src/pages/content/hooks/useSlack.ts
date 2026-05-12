@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
 import { debug } from '../../../utils/chrome-polyfill';
 import { withErrorHandling } from '../../../utils/errorHandler';
-import { getStoredChannel, storeChannel } from '../../../utils/storage';
+import { getLastUsedWebhookName, getSlackWebhooks, storeLastUsedWebhookName } from '../../../utils/storage';
 import { wrapSlackMentions } from '../../../utils/pr';
+import { SlackWebhook } from '../../../types/webhook';
 
 export interface SlackStatusMessage {
   text: string;
@@ -45,41 +46,47 @@ export const useSlack = () => {
     },
   );
 
-  // Load stored channel from Chrome storage (asynchronous operation)
-  const loadStoredChannel = useCallback(async () => {
+  const loadWebhooks = useCallback(async (): Promise<SlackWebhook[]> => {
     try {
-      // Get the stored channel asynchronously
-      return await getStoredChannel();
+      return await getSlackWebhooks();
     } catch (error) {
-      debug.error('Slack', 'Error loading stored channel', error);
+      debug.error('Slack', 'Error loading webhooks', error);
       setStatusMessage({
-        text: `Error loading stored channel: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        text: `Error loading webhooks: ${error instanceof Error ? error.message : 'Unknown error'}`,
         type: 'error',
       });
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return [];
+    }
+  }, []);
+
+  const loadLastUsedWebhookName = useCallback(async (): Promise<string> => {
+    try {
+      return await getLastUsedWebhookName();
+    } catch (error) {
+      debug.error('Slack', 'Error loading last-used webhook name', error);
+      return '';
     }
   }, []);
 
   const sendToSlack = withErrorHandling(
-    async (data: { channel: string; message: string }): Promise<SlackSendResult> => {
-      if (!data.channel) {
+    async (data: { webhookName: string; message: string }): Promise<SlackSendResult> => {
+      if (!data.webhookName) {
         setStatusMessage({
-          text: 'Please enter a channel name',
+          text: 'Please pick a webhook',
           type: 'error',
         });
         return {
           success: false,
-          error: 'Please enter a channel name',
+          error: 'Please pick a webhook',
         };
       }
 
-      // Add <> around @mentions for Slack formatting using shared sanitizer
       const formattedMessage = wrapSlackMentions(data.message);
 
       const result = await chrome.runtime.sendMessage({
         message: 'sendToSlack',
         data: {
-          channel: data.channel,
+          webhookName: data.webhookName,
           message: {
             text: formattedMessage,
           },
@@ -91,8 +98,7 @@ export const useSlack = () => {
           text: 'Message sent to Slack successfully!',
           type: 'success',
         });
-        // Store the channel asynchronously
-        await storeChannel(data.channel);
+        await storeLastUsedWebhookName(data.webhookName);
       } else if (result && result.error) {
         setStatusMessage({
           text: `Error sending to Slack: ${result.error}`,
@@ -114,7 +120,8 @@ export const useSlack = () => {
     statusMessage,
     setStatusMessage,
     checkSlackConfig,
-    loadStoredChannel,
+    loadWebhooks,
+    loadLastUsedWebhookName,
     sendToSlack,
   };
 };

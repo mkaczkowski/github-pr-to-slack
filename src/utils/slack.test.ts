@@ -1,14 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { formatSlackMessage, sendToSlack } from './slack';
-import { getSlackWebhookUrl } from './storage';
-import { chromeMock } from '../test/mocks/chrome';
+import { getWebhookByName } from './storage';
 
-// Mock the storage module
 vi.mock('./storage', () => ({
-  getSlackWebhookUrl: vi.fn(),
+  getWebhookByName: vi.fn(),
 }));
 
-// Mock the chrome-polyfill module
 vi.mock('./chrome-polyfill', () => ({
   debug: {
     log: vi.fn(),
@@ -16,17 +13,16 @@ vi.mock('./chrome-polyfill', () => ({
   },
 }));
 
-// Mock fetch
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('Slack Utilities', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    // Default mock for getSlackWebhookUrl
-    (getSlackWebhookUrl as any).mockResolvedValue(
-      'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-    );
+    (getWebhookByName as any).mockResolvedValue({
+      name: 'frontend',
+      url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
+    });
   });
 
   afterEach(() => {
@@ -34,7 +30,7 @@ describe('Slack Utilities', () => {
   });
 
   describe('formatSlackMessage', () => {
-    it('should format basic PR info correctly', () => {
+    it('formats basic PR info correctly', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -46,7 +42,7 @@ describe('Slack Utilities', () => {
       expect(message.text).toContain('https://github.com/user/repo/pull/123');
     });
 
-    it('should include reviewers when provided', () => {
+    it('includes reviewers when provided', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -58,7 +54,7 @@ describe('Slack Utilities', () => {
       expect(message.text).toContain('assigned: <@user1>, <@user2>');
     });
 
-    it('should include the author line before the assigned line when provided', () => {
+    it('includes the author line before the assigned line when provided', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -73,7 +69,7 @@ describe('Slack Utilities', () => {
       expect(message.text.indexOf('author:')).toBeLessThan(message.text.indexOf('assigned:'));
     });
 
-    it('should sanitize reviewer names', () => {
+    it('sanitizes reviewer names', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -82,12 +78,11 @@ describe('Slack Utilities', () => {
 
       const message = formatSlackMessage(prInfo);
 
-      // Should strip special characters
       expect(message.text).toContain('<@username>');
       expect(message.text).toContain('<@useremailcom>');
     });
 
-    it('should sanitize author name when provided', () => {
+    it('sanitizes author name when provided', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -99,7 +94,7 @@ describe('Slack Utilities', () => {
       expect(message.text).toContain('author: <@authoremailexamplecom>');
     });
 
-    it('should include lines of code changes when provided', () => {
+    it('includes lines of code changes when provided', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -111,7 +106,7 @@ describe('Slack Utilities', () => {
       expect(message.text).toContain('(+100, -50)');
     });
 
-    it('should include custom message when provided', () => {
+    it('includes custom message when provided', () => {
       const prInfo = {
         title: 'Test PR Title',
         url: 'https://github.com/user/repo/pull/123',
@@ -125,44 +120,40 @@ describe('Slack Utilities', () => {
   });
 
   describe('sendToSlack', () => {
-    it('should throw an error if webhook URL is not configured', async () => {
-      // Mock getSlackWebhookUrl to return empty string
-      (getSlackWebhookUrl as any).mockResolvedValue('');
+    it('returns an error if the webhook name is not known', async () => {
+      (getWebhookByName as any).mockResolvedValue(undefined);
 
       const message = { text: 'Test message' };
-      const result = await sendToSlack('#general', message);
+      const result = await sendToSlack('missing', message);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('Slack webhook URL not configured');
+      expect(result.error).toContain('not found');
     });
 
-    it('should send message to Slack with correct payload', async () => {
-      // Mock successful fetch response
+    it('posts the message directly to the webhook URL without a channel field', async () => {
       mockFetch.mockResolvedValue({
         ok: true,
         status: 200,
       });
 
       const message = { text: 'Test message' };
-      const result = await sendToSlack('#general', message);
+      const result = await sendToSlack('frontend', message);
 
-      // Check that fetch was called with correct arguments
       expect(mockFetch).toHaveBeenCalledWith(
         'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({
-            text: 'Test message',
-            channel: '#general',
-          }),
+          body: JSON.stringify({ text: 'Test message' }),
         }),
       );
+
+      const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(body).not.toHaveProperty('channel');
 
       expect(result.success).toBe(true);
     });
 
-    it('should handle Slack API errors', async () => {
-      // Mock failed fetch response
+    it('handles Slack API errors', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 400,
@@ -170,31 +161,29 @@ describe('Slack Utilities', () => {
       });
 
       const message = { text: 'Test message' };
-      const result = await sendToSlack('#general', message);
+      const result = await sendToSlack('frontend', message);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Slack API error: 400 invalid_payload');
     });
 
-    it('should handle network errors', async () => {
-      // Mock network error
+    it('handles network errors', async () => {
       const networkError = new TypeError('Failed to fetch');
       mockFetch.mockRejectedValue(networkError);
 
       const message = { text: 'Test message' };
-      const result = await sendToSlack('#general', message);
+      const result = await sendToSlack('frontend', message);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('Network error: could not connect to Slack');
     });
 
-    it('should handle other fetch errors', async () => {
-      // Mock other error
+    it('handles other fetch errors', async () => {
       const otherError = new Error('Some other error');
       mockFetch.mockRejectedValue(otherError);
 
       const message = { text: 'Test message' };
-      const result = await sendToSlack('#general', message);
+      const result = await sendToSlack('frontend', message);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Some other error');

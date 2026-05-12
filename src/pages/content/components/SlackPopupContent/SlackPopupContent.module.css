@@ -9,6 +9,29 @@
   margin-bottom: 16px;
 }
 
+.select {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid var(--pr-color-border-primary);
+  border-radius: 6px;
+  background-color: var(--pr-color-background-input);
+  color: var(--pr-color-text-primary);
+  box-sizing: border-box;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--pr-color-border-focus);
+  box-shadow: var(--pr-shadow-focus-input);
+}
+
+.errorMessage {
+  color: var(--pr-color-text-danger);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
 .formGroup label {
   display: block;
   margin-bottom: 8px;

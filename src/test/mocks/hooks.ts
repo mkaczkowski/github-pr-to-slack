@@ -29,24 +29,26 @@ export const mockUseGithubPR = () => {
 
 /**
  * Mock implementation for useSlack hook
- * @param options Configuration options for the mock
  */
 export const mockUseSlack = (
   options: {
     isConfigured?: boolean;
     statusMessage?: { text: string; type: string };
-    storedChannel?: string;
+    webhooks?: Array<{ name: string; url: string }>;
+    lastUsedWebhookName?: string;
   } = {},
 ) => {
   const {
     isConfigured = true,
     statusMessage = { text: '', type: '' },
-    storedChannel = TEST_CONSTANTS.DEFAULT_CHANNEL,
+    webhooks = [{ name: TEST_CONSTANTS.DEFAULT_WEBHOOK_NAME, url: TEST_CONSTANTS.SLACK_WEBHOOK_URL }],
+    lastUsedWebhookName = TEST_CONSTANTS.DEFAULT_WEBHOOK_NAME,
   } = options;
 
   const mockSetStatusMessage = vi.fn();
   const mockCheckSlackConfig = vi.fn().mockResolvedValue(isConfigured);
-  const mockLoadStoredChannel = vi.fn().mockResolvedValue(storedChannel);
+  const mockLoadWebhooks = vi.fn().mockResolvedValue(webhooks);
+  const mockLoadLastUsedWebhookName = vi.fn().mockResolvedValue(lastUsedWebhookName);
   const mockSendToSlack = vi.fn().mockResolvedValue({ success: true });
 
   const useSlackMock = vi.fn(() => ({
@@ -54,7 +56,8 @@ export const mockUseSlack = (
     statusMessage,
     setStatusMessage: mockSetStatusMessage,
     checkSlackConfig: mockCheckSlackConfig,
-    loadStoredChannel: mockLoadStoredChannel,
+    loadWebhooks: mockLoadWebhooks,
+    loadLastUsedWebhookName: mockLoadLastUsedWebhookName,
     sendToSlack: mockSendToSlack,
   }));
 
@@ -66,7 +69,8 @@ export const mockUseSlack = (
     useSlackMock,
     mockSetStatusMessage,
     mockCheckSlackConfig,
-    mockLoadStoredChannel,
+    mockLoadWebhooks,
+    mockLoadLastUsedWebhookName,
     mockSendToSlack,
   };
 };
@@ -100,46 +104,51 @@ export const mockUseUIHelpers = () => {
 export const mockStorageUtils = (
   options: {
     githubHost?: string;
-    slackWebhookUrl?: string;
+    webhooks?: Array<{ name: string; url: string }>;
     themePreference?: string;
-    storedChannel?: string;
+    lastUsedWebhookName?: string;
   } = {},
 ) => {
   const {
     githubHost = TEST_CONSTANTS.GITHUB_HOST,
-    slackWebhookUrl = TEST_CONSTANTS.SLACK_WEBHOOK_URL,
+    webhooks = [{ name: TEST_CONSTANTS.DEFAULT_WEBHOOK_NAME, url: TEST_CONSTANTS.SLACK_WEBHOOK_URL }],
     themePreference = 'system',
-    storedChannel = TEST_CONSTANTS.DEFAULT_CHANNEL,
+    lastUsedWebhookName = TEST_CONSTANTS.DEFAULT_WEBHOOK_NAME,
   } = options;
 
   const mockGetGitHubHost = vi.fn().mockResolvedValue(githubHost);
   const mockSaveGitHubHost = vi.fn().mockResolvedValue(undefined);
-  const mockGetSlackWebhookUrl = vi.fn().mockResolvedValue(slackWebhookUrl);
-  const mockSaveSlackWebhookUrl = vi.fn().mockResolvedValue(undefined);
+  const mockGetSlackWebhooks = vi.fn().mockResolvedValue(webhooks);
+  const mockSaveSlackWebhooks = vi.fn().mockResolvedValue(undefined);
+  const mockGetWebhookByName = vi
+    .fn()
+    .mockImplementation(async (name: string) => webhooks.find((entry) => entry.name === name));
   const mockGetThemePreference = vi.fn().mockResolvedValue(themePreference);
   const mockSaveThemePreference = vi.fn().mockResolvedValue(undefined);
-  const mockGetStoredChannel = vi.fn().mockResolvedValue(storedChannel);
-  const mockStoreChannel = vi.fn().mockResolvedValue(undefined);
+  const mockGetLastUsedWebhookName = vi.fn().mockResolvedValue(lastUsedWebhookName);
+  const mockStoreLastUsedWebhookName = vi.fn().mockResolvedValue(undefined);
 
   vi.mock('../../utils/storage', () => ({
     getGitHubHost: mockGetGitHubHost,
     saveGitHubHost: mockSaveGitHubHost,
-    getSlackWebhookUrl: mockGetSlackWebhookUrl,
-    saveSlackWebhookUrl: mockSaveSlackWebhookUrl,
+    getSlackWebhooks: mockGetSlackWebhooks,
+    saveSlackWebhooks: mockSaveSlackWebhooks,
+    getWebhookByName: mockGetWebhookByName,
     getThemePreference: mockGetThemePreference,
     saveThemePreference: mockSaveThemePreference,
-    getStoredChannel: mockGetStoredChannel,
-    storeChannel: mockStoreChannel,
+    getLastUsedWebhookName: mockGetLastUsedWebhookName,
+    storeLastUsedWebhookName: mockStoreLastUsedWebhookName,
   }));
 
   return {
     mockGetGitHubHost,
     mockSaveGitHubHost,
-    mockGetSlackWebhookUrl,
-    mockSaveSlackWebhookUrl,
+    mockGetSlackWebhooks,
+    mockSaveSlackWebhooks,
+    mockGetWebhookByName,
     mockGetThemePreference,
     mockSaveThemePreference,
-    mockGetStoredChannel,
-    mockStoreChannel,
+    mockGetLastUsedWebhookName,
+    mockStoreLastUsedWebhookName,
   };
 };

@@ -7,7 +7,7 @@
 
 import { debug } from './utils/chrome-polyfill';
 import { sendToSlack } from './utils/slack';
-import { getSlackWebhookUrl } from './utils/storage';
+import { getSlackWebhooks } from './utils/storage';
 import { isSupportedUrl } from './utils/github';
 
 // Define icon paths
@@ -24,7 +24,7 @@ const INACTIVE_ICON = {
 };
 
 interface SlackMessageData {
-  channel: string;
+  webhookName: string;
   message: unknown;
 }
 
@@ -221,9 +221,9 @@ async function openOptionsPage(sendResponse: (response: SlackResponse) => void):
 // Check Slack configuration
 async function checkSlackConfig(sendResponse: (response: SlackResponse) => void): Promise<void> {
   try {
-    const webhookUrl = await getSlackWebhookUrl();
+    const webhooks = await getSlackWebhooks();
 
-    const configured = !!webhookUrl;
+    const configured = webhooks.length > 0;
 
     sendResponse({
       success: true,
@@ -247,7 +247,7 @@ async function handleSlackMessage(
   data: SlackMessageData | undefined,
   sendResponse: (response: SlackResponse) => void,
 ): Promise<void> {
-  if (!data || !data.channel) {
+  if (!data || !data.webhookName) {
     debug.error('Background', 'Invalid Slack message data');
     sendResponse({
       success: false,
@@ -258,13 +258,13 @@ async function handleSlackMessage(
 
   try {
     // Check if Slack is configured
-    const webhookUrl = await getSlackWebhookUrl();
+    const webhooks = await getSlackWebhooks();
 
-    if (!webhookUrl) {
+    if (webhooks.length === 0) {
       debug.error('Background', 'Slack is not configured');
       sendResponse({
         success: false,
-        error: 'Slack webhook URL not configured',
+        error: 'No Slack webhooks configured',
       });
       return;
     }
@@ -295,7 +295,7 @@ async function handleSlackMessage(
 
     try {
       // Send message to Slack
-      const response = await sendToSlack(data.channel, preparedMessage);
+      const response = await sendToSlack(data.webhookName, preparedMessage);
 
       // Check for Slack API errors
       if (!response.success) {

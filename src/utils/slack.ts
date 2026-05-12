@@ -3,7 +3,7 @@
  */
 
 import { debug } from './chrome-polyfill';
-import { getSlackWebhookUrl } from './storage';
+import { getWebhookByName } from './storage';
 import { PRInfo, getPRFormattingData } from './pr';
 
 interface SlackMessage {
@@ -38,40 +38,31 @@ export const formatSlackMessage = (prInfo: PRInfo, customMessage = ''): SlackMes
 };
 
 /**
- * Send message to Slack using webhook
+ * Send message to Slack using the webhook identified by name.
+ * Each incoming webhook is bound to a channel on the Slack side, so the
+ * `channel` field is intentionally omitted from the payload.
  */
-export const sendToSlack = async (channel: string, message: SlackMessage): Promise<SlackResponse> => {
+export const sendToSlack = async (webhookName: string, message: SlackMessage): Promise<SlackResponse> => {
   try {
-    // Get webhook URL from storage
-    const webhookUrl = await getSlackWebhookUrl();
+    const webhook = await getWebhookByName(webhookName);
 
     debug.log('Slack', 'Sending message to Slack', {
-      webhookUrl: webhookUrl ? 'configured' : 'missing',
+      webhookName,
+      webhook: webhook ? 'found' : 'missing',
     });
-    if (!webhookUrl) {
-      throw new Error('Slack webhook URL not configured. Please go to extension options to set it up.');
+
+    if (!webhook) {
+      throw new Error(`Slack webhook "${webhookName}" not found. Please check your extension options.`);
     }
 
     debug.log('Slack', 'Message to be sent', {
       messageLength: message.text ? message.text.length : 0,
     });
 
-    // Add channel to message
-    const payload = {
-      ...message,
-      channel: channel,
-    };
-
-    debug.log('Slack', 'Prepared payload', {
-      channel,
-      textLength: payload.text ? payload.text.length : 0,
-    });
-
-    // Send to webhook
     try {
-      const response = await fetch(webhookUrl, {
+      const response = await fetch(webhook.url, {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(message),
       });
 
       debug.log('Slack', 'Response received', {
@@ -88,7 +79,6 @@ export const sendToSlack = async (channel: string, message: SlackMessage): Promi
     } catch (networkError) {
       debug.error('Slack', 'Network error sending message', networkError);
 
-      // Handle network errors specifically
       if (networkError instanceof TypeError && networkError.message.includes('Failed to fetch')) {
         throw new Error(
           'Network error: could not connect to Slack. Please check your internet connection and try again.',
