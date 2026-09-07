@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { debug } from '../../../utils/chrome-polyfill';
 import { withErrorHandling } from '../../../utils/errorHandler';
+import { BackgroundResponse, sendMessageToBackground } from '../../../utils/messaging';
 import { getStoredChannel, storeChannel } from '../../../utils/storage';
 import { wrapSlackMentions } from '../../../utils/pr';
 
@@ -23,9 +24,13 @@ export const useSlack = () => {
 
   const checkSlackConfig = withErrorHandling(
     async (): Promise<boolean> => {
-      const response = await chrome.runtime.sendMessage({
+      const response = await sendMessageToBackground<BackgroundResponse>({
         message: 'checkSlackConfig',
       });
+
+      if (typeof response?.configured !== 'boolean') {
+        throw new Error(`Unexpected checkSlackConfig response from the background worker: ${JSON.stringify(response)}`);
+      }
 
       setIsConfigured(response.configured);
 
@@ -76,7 +81,7 @@ export const useSlack = () => {
       // Add <> around @mentions for Slack formatting using shared sanitizer
       const formattedMessage = wrapSlackMentions(data.message);
 
-      const result = await chrome.runtime.sendMessage({
+      const result = await sendMessageToBackground<BackgroundResponse>({
         message: 'sendToSlack',
         data: {
           channel: data.channel,
@@ -86,21 +91,25 @@ export const useSlack = () => {
         },
       });
 
-      if (result && result.success) {
+      if (typeof result?.success !== 'boolean') {
+        throw new Error(`Unexpected sendToSlack response from the background worker: ${JSON.stringify(result)}`);
+      }
+
+      if (result.success) {
         setStatusMessage({
           text: 'Message sent to Slack successfully!',
           type: 'success',
         });
         // Store the channel asynchronously
         await storeChannel(data.channel);
-      } else if (result && result.error) {
+      } else {
         setStatusMessage({
-          text: `Error sending to Slack: ${result.error}`,
+          text: `Error sending to Slack: ${result.error || 'Unknown error'}`,
           type: 'error',
         });
       }
 
-      return result || { success: true };
+      return { success: result.success, error: result.error };
     },
     {
       context: 'Sending to Slack',

@@ -16,7 +16,7 @@ interface SlackPopupContentProps {
   statusMessage: SlackStatusMessage;
   setStatusMessage: React.Dispatch<React.SetStateAction<SlackStatusMessage>>;
   isConfigured: boolean;
-  openOptions: () => void;
+  openOptions: () => void | Promise<void>;
 }
 
 /**
