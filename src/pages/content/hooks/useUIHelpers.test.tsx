@@ -191,7 +191,9 @@ describe('useUIHelpers Hook', () => {
 
       const { result } = renderHook(() => useUIHelpers());
 
-      await expect(result.current.openOptions()).rejects.toThrow('the background worker sent no response');
+      await expect(result.current.openOptions()).rejects.toThrow(
+        'The background worker has no handler for "openOptionsPage"',
+      );
     });
   });
 

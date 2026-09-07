@@ -114,6 +114,27 @@ describe('useSlack Hook', () => {
       });
     });
 
+    it('should report a failed config check as an error rather than as "not configured"', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue({
+        success: false,
+        configured: false,
+        error: 'Could not check Slack configuration',
+      });
+
+      const { result } = renderHook(() => useSlack());
+
+      await act(async () => {
+        await result.current.checkSlackConfig();
+      });
+
+      expect(result.current.statusMessage).toEqual({
+        text: 'Slack Configuration: Could not check Slack configuration',
+        type: 'error',
+      });
+      // The check failed, so it says nothing about whether Slack is configured.
+      expect(result.current.isConfigured).toBe(true);
+    });
+
     it('should handle errors during configuration check', async () => {
       // Mock chrome.runtime.sendMessage to throw an error
       chromeMock.runtime.sendMessage.mockRejectedValue(new Error('Network error'));

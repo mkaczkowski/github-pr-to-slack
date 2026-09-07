@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { debug } from '../../../utils/chrome-polyfill';
 import { withErrorHandling } from '../../../utils/errorHandler';
-import { BackgroundResponse, sendMessageToBackground } from '../../../utils/messaging';
+import { sendMessageToBackground } from '../../../utils/messaging';
 import { getStoredChannel, storeChannel } from '../../../utils/storage';
 import { wrapSlackMentions } from '../../../utils/pr';
 
@@ -24,11 +24,17 @@ export const useSlack = () => {
 
   const checkSlackConfig = withErrorHandling(
     async (): Promise<boolean> => {
-      const response = await sendMessageToBackground<BackgroundResponse>({
+      const response = await sendMessageToBackground({
         message: 'checkSlackConfig',
       });
 
-      if (typeof response?.configured !== 'boolean') {
+      // A failed check says nothing about whether Slack is configured, so it
+      // must not be reported to the user as "not configured".
+      if (!response.success) {
+        throw new Error(response.error || 'The background worker could not read the Slack configuration.');
+      }
+
+      if (typeof response.configured !== 'boolean') {
         throw new Error(`Unexpected checkSlackConfig response from the background worker: ${JSON.stringify(response)}`);
       }
 
@@ -81,7 +87,7 @@ export const useSlack = () => {
       // Add <> around @mentions for Slack formatting using shared sanitizer
       const formattedMessage = wrapSlackMentions(data.message);
 
-      const result = await sendMessageToBackground<BackgroundResponse>({
+      const result = await sendMessageToBackground({
         message: 'sendToSlack',
         data: {
           channel: data.channel,
@@ -91,7 +97,7 @@ export const useSlack = () => {
         },
       });
 
-      if (typeof result?.success !== 'boolean') {
+      if (typeof result.success !== 'boolean') {
         throw new Error(`Unexpected sendToSlack response from the background worker: ${JSON.stringify(result)}`);
       }
 

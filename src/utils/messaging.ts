@@ -46,6 +46,8 @@ export interface BackgroundResponse {
 /** Delays before each retry, so the whole sequence stays well under a second. */
 const RETRY_DELAYS_MS = [50, 150, 400];
 
+const MAX_ATTEMPTS = RETRY_DELAYS_MS.length + 1;
+
 /** Raised when the page holds a content script from a previous extension version. */
 export class ExtensionContextInvalidatedError extends Error {
   constructor(requestName: string) {
@@ -57,6 +59,15 @@ export class ExtensionContextInvalidatedError extends Error {
   }
 }
 
+/**
+ * Only these two errors are safe to retry. Chrome raises them when no receiver
+ * existed at dispatch time, which means the request was never handed to a
+ * handler and replaying it cannot repeat a side effect.
+ *
+ * Do not add "The message port closed before a response was received" here.
+ * That one means the worker accepted the request and died before answering, so
+ * a `sendToSlack` retry would post the message to Slack a second time.
+ */
 const isServiceWorkerAsleepError = (message: string): boolean =>
   message.includes('Receiving end does not exist') || message.includes('Could not establish connection');
 
@@ -70,21 +81,23 @@ const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout
 /**
  * Send a request to the background service worker, waking it if needed.
  *
+ * Always resolves with a response or throws; it never hands back `undefined`.
+ *
  * @throws ExtensionContextInvalidatedError when the page outlived the extension version that injected it.
- * @throws Error when the worker stays unreachable, or with the original failure for any other error.
+ * @throws Error when the worker stays unreachable, has no handler for the request, or fails for any other reason.
  */
-export const sendMessageToBackground = async <Response extends BackgroundResponse>(
-  request: BackgroundRequest,
-): Promise<Response> => {
+export const sendMessageToBackground = async (request: BackgroundRequest): Promise<BackgroundResponse> => {
   let lastError: Error | undefined;
 
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     if (!hasLiveExtensionContext()) {
       throw new ExtensionContextInvalidatedError(request.message);
     }
 
+    let response: BackgroundResponse | undefined;
+
     try {
-      return (await chrome.runtime.sendMessage(request)) as Response;
+      response = (await chrome.runtime.sendMessage(request)) as BackgroundResponse | undefined;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
@@ -97,23 +110,33 @@ export const sendMessageToBackground = async <Response extends BackgroundRespons
         throw lastError;
       }
 
-      const retryDelayMs = RETRY_DELAYS_MS[attempt];
-      if (retryDelayMs === undefined) {
+      if (attempt === MAX_ATTEMPTS - 1) {
         break;
       }
 
+      const retryDelayMs = RETRY_DELAYS_MS[attempt];
       debug.log('Messaging', 'Background worker unreachable, retrying', {
         request: request.message,
         attempt: attempt + 1,
         retryDelayMs,
       });
       await delay(retryDelayMs);
+      continue;
     }
+
+    // The worker was reachable but no handler matched, so nothing was done with
+    // the request. Retrying cannot help: the request name and the worker's
+    // routing have drifted apart.
+    if (response === undefined) {
+      throw new Error(`The background worker has no handler for "${request.message}", so it sent no response.`);
+    }
+
+    return response;
   }
 
   throw new Error(
     `Could not reach the extension background worker for "${request.message}" after ` +
-      `${RETRY_DELAYS_MS.length + 1} attempts: ${lastError?.message ?? 'unknown error'}. ` +
+      `${MAX_ATTEMPTS} attempts: ${lastError?.message ?? 'unknown error'}. ` +
       'Reload the page and try again.',
   );
 };

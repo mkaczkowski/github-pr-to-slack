@@ -79,6 +79,27 @@ describe('sendMessageToBackground', () => {
     expect(chromeMock.runtime.sendMessage).toHaveBeenCalledTimes(1);
   });
 
+  it('should throw when the worker is reachable but has no handler for the request', async () => {
+    chromeMock.runtime.sendMessage.mockResolvedValue(undefined);
+
+    await expect(sendMessageToBackground({ message: 'openOptionsPage' })).rejects.toThrow(
+      'The background worker has no handler for "openOptionsPage", so it sent no response.',
+    );
+    // A missing handler is a routing bug, not a transient failure.
+    expect(chromeMock.runtime.sendMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not retry a worker that died mid-request, to avoid repeating side effects', async () => {
+    chromeMock.runtime.sendMessage.mockRejectedValue(
+      new Error('The message port closed before a response was received.'),
+    );
+
+    await expect(
+      sendMessageToBackground({ message: 'sendToSlack', data: { channel: '#general', message: { text: 'hi' } } }),
+    ).rejects.toThrow('The message port closed before a response was received.');
+    expect(chromeMock.runtime.sendMessage).toHaveBeenCalledTimes(1);
+  });
+
   it('should surface unrelated errors unchanged and not retry them', async () => {
     chromeMock.runtime.sendMessage.mockRejectedValue(new Error('Network error'));
 

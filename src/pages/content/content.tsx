@@ -238,8 +238,9 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     sendResponse({ success: true });
   }
 
-  // Every branch above responds synchronously, so the message channel must close
-  // now. Returning true here would leave the sender's promise pending until the
-  // port is torn down.
+  // The responses above acknowledge receipt, not completion: reinitialization is
+  // debounced and the sender does not wait for it. Nothing is left to send, so
+  // the channel must close now. Returning true here would leave the sender's
+  // promise pending until the port is torn down.
   return false;
 });
