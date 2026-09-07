@@ -165,14 +165,35 @@ describe('useUIHelpers Hook', () => {
   });
 
   describe('openOptions', () => {
-    it('should call chrome.runtime.openOptionsPage', () => {
+    it('should ask the background worker to open the options page', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue({ success: true });
+
       const { result } = renderHook(() => useUIHelpers());
 
-      // Call openOptions
-      result.current.openOptions();
+      await result.current.openOptions();
 
-      // Verify chrome.runtime.openOptionsPage was called
-      expect(chromeMock.runtime.openOptionsPage).toHaveBeenCalled();
+      // chrome.runtime.openOptionsPage does not exist in content scripts,
+      // so the request has to go through the background worker.
+      expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith({ message: 'openOptionsPage' });
+      expect(chromeMock.runtime.openOptionsPage).not.toHaveBeenCalled();
+    });
+
+    it('should throw when the background worker reports a failure', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue({ success: false, error: 'Could not open options page' });
+
+      const { result } = renderHook(() => useUIHelpers());
+
+      await expect(result.current.openOptions()).rejects.toThrow('Could not open options page');
+    });
+
+    it('should throw when the background worker sends no response', async () => {
+      chromeMock.runtime.sendMessage.mockResolvedValue(undefined);
+
+      const { result } = renderHook(() => useUIHelpers());
+
+      await expect(result.current.openOptions()).rejects.toThrow(
+        'The background worker has no handler for "openOptionsPage"',
+      );
     });
   });
 

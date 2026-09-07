@@ -141,6 +141,21 @@ export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) =>
   };
 
   /**
+   * Handle opening the extension options page
+   */
+  const handleOpenOptions = async (): Promise<void> => {
+    try {
+      await openOptions();
+    } catch (error) {
+      debug.error('SlackPopup', 'Error opening options page', error);
+      setStatusMessage({
+        text: error instanceof Error ? error.message : 'Could not open the extension options page.',
+        type: 'error',
+      });
+    }
+  };
+
+  /**
    * Handle copy to clipboard
    */
   const handleCopyToClipboard = async (): Promise<void> => {
@@ -182,7 +197,7 @@ export const SlackPopup: React.FC<SlackPopupProps> = React.memo(({ onClose }) =>
               statusMessage={statusMessage}
               setStatusMessage={setStatusMessage}
               isConfigured={isConfigured}
-              openOptions={openOptions}
+              openOptions={handleOpenOptions}
             />
 
             <SlackPopupFooter

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { debug } from '../../../utils/chrome-polyfill';
+import { sendMessageToBackground } from '../../../utils/messaging';
 
 export const useUIHelpers = (onClose?: () => void) => {
   const popupRef = useRef<HTMLDivElement>(null);
@@ -35,8 +36,16 @@ export const useUIHelpers = (onClose?: () => void) => {
     }
   };
 
-  const openOptions = (): void => {
-    chrome.runtime.openOptionsPage();
+  // chrome.runtime.openOptionsPage is not exposed to content scripts, so the
+  // background service worker has to open the page on our behalf.
+  const openOptions = async (): Promise<void> => {
+    const response = await sendMessageToBackground({ message: 'openOptionsPage' });
+
+    if (!response.success) {
+      throw new Error(
+        `Could not open the extension options page: ${response.error || 'the background worker reported a failure'}`,
+      );
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, onSubmit?: () => void, onEscape?: () => void): void => {

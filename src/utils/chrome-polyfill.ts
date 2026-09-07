@@ -59,7 +59,7 @@ if (!chrome.runtime.openOptionsPage) {
     // In content scripts, we should delegate to the background script
     if (chrome.runtime.sendMessage) {
       debug.log('ChromePolyfill', 'Delegating openOptionsPage to background script');
-      chrome.runtime.sendMessage({ action: 'openOptionsPage' }, (response) => {
+      chrome.runtime.sendMessage({ message: 'openOptionsPage' }, (response) => {
         debug.log('ChromePolyfill', 'Options page opened via background', response);
         if (callback) callback();
       });

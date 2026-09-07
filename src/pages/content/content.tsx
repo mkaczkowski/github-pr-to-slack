@@ -224,16 +224,23 @@ if (document.readyState === 'loading') {
 }
 
 // Listen for messages from the background script
-chrome.runtime.onMessage.addListener((request) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.message === 'pageUpdated') {
     debug.log('Content', 'Page updated message received');
     checkAndReinitialize(500, 'background message');
+    sendResponse({ success: true });
   } else if (request.message === 'initializeContent') {
     debug.log('Content', 'Initialization message received from background script');
     // Initialize immediately when requested by the background script
     init();
     setupMutationObserver();
     setupHistoryListeners();
+    sendResponse({ success: true });
   }
-  return true;
+
+  // The responses above acknowledge receipt, not completion: reinitialization is
+  // debounced and the sender does not wait for it. Nothing is left to send, so
+  // the channel must close now. Returning true here would leave the sender's
+  // promise pending until the port is torn down.
+  return false;
 });

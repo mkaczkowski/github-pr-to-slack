@@ -31,6 +31,8 @@ export const chromeMock = {
 
   // Runtime API
   runtime: {
+    // Present whenever the extension context is live; cleared once it is invalidated.
+    id: 'mock-extension-id',
     sendMessage: vi.fn(),
     onMessage: {
       addListener: vi.fn(),
