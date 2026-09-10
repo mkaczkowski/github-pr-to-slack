@@ -1,7 +1,36 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { isSupportedUrl, isOnPRPage, extractPRInfo } from './github';
+import { isSupportedUrl, isOnPRPage, extractPRInfo, extractUsernameFromUserElement } from './github';
 import { getGitHubHost } from './storage';
 import { chromeMock } from '../test/mocks/chrome';
+
+const mockUserElement = ({
+  text,
+  href,
+  hovercardUrl,
+  tagName,
+}: {
+  text: string;
+  href?: string | null;
+  hovercardUrl?: string | null;
+  tagName?: string;
+}) => {
+  const el: any = {
+    tagName: tagName || (href ? 'A' : 'SPAN'),
+    textContent: text,
+    closest: vi.fn((selector: string) => {
+      if (selector === 'a' && (href || el.tagName === 'A')) return el;
+      if (selector === '[data-hovercard-url]' && hovercardUrl) return el;
+      return null;
+    }),
+    querySelector: vi.fn(() => null),
+    getAttribute: vi.fn((name: string) => {
+      if (name === 'href') return href ?? null;
+      if (name === 'data-hovercard-url') return hovercardUrl ?? null;
+      return null;
+    }),
+  };
+  return el;
+};
 
 // Mock the storage module
 vi.mock('./storage', () => ({
@@ -15,6 +44,45 @@ vi.mock('./chrome-polyfill', () => ({
     error: vi.fn(),
   },
 }));
+
+describe('extractUsernameFromUserElement', () => {
+  it('reads the username from a profile href', () => {
+    const el = mockUserElement({
+      text: 'Riley Chen (rchen)',
+      href: '/rchen',
+    });
+
+    expect(extractUsernameFromUserElement(el)).toBe('rchen');
+  });
+
+  it('reads the username from a hovercard URL when href is missing', () => {
+    const el = mockUserElement({
+      text: 'Riley Chen (rchen)',
+      hovercardUrl: '/users/rchen/hovercard',
+    });
+
+    expect(extractUsernameFromUserElement(el)).toBe('rchen');
+  });
+
+  it('ignores javascript and hash hrefs and falls back to text', () => {
+    expect(
+      extractUsernameFromUserElement(
+        mockUserElement({ text: 'Riley Chen (rchen)', href: 'javascript:void(0)' }),
+      ),
+    ).toBe('rchen');
+    expect(
+      extractUsernameFromUserElement(mockUserElement({ text: 'Quinn Patel (qpatel)', href: '#' })),
+    ).toBe('qpatel');
+  });
+
+  it('ignores multi-segment non-user hrefs', () => {
+    expect(
+      extractUsernameFromUserElement(
+        mockUserElement({ text: 'Riley Chen (rchen)', href: '/orgs/box/people' }),
+      ),
+    ).toBe('rchen');
+  });
+});
 
 describe('GitHub Utilities', () => {
   beforeEach(() => {
@@ -164,7 +232,7 @@ describe('GitHub Utilities', () => {
           selector ===
           ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee"
         ) {
-          return [{ textContent: 'reviewer1' }, { textContent: 'reviewer2' }];
+          return [mockUserElement({ text: 'reviewer1' }), mockUserElement({ text: 'reviewer2' })];
         }
         return [];
       });
@@ -174,13 +242,67 @@ describe('GitHub Utilities', () => {
       expect(prInfo.reviewers).toEqual(['reviewer1', 'reviewer2']);
     });
 
+    it('should extract usernames from "Display Name (username)" reviewer text', () => {
+      (document.querySelector as any).mockImplementation((selector) => {
+        if (selector === '.js-issue-title') {
+          return { textContent: 'Test PR Title' };
+        }
+        return null;
+      });
+
+      (document.querySelectorAll as any).mockImplementation((selector) => {
+        if (
+          selector ===
+          ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee"
+        ) {
+          return [
+            mockUserElement({ text: 'Riley Chen (rchen)' }),
+            mockUserElement({ text: 'Quinn Patel (qpatel)' }),
+          ];
+        }
+        return [];
+      });
+
+      const prInfo = extractPRInfo();
+
+      expect(prInfo.reviewers).toEqual(['rchen', 'qpatel']);
+    });
+
+    it('should prefer profile href over display-name text', () => {
+      (document.querySelector as any).mockImplementation((selector) => {
+        if (selector === '.js-issue-title') {
+          return { textContent: 'Test PR Title' };
+        }
+        return null;
+      });
+
+      (document.querySelectorAll as any).mockImplementation((selector) => {
+        if (
+          selector ===
+          ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee"
+        ) {
+          return [
+            mockUserElement({
+              text: 'Riley ChenRiley Chen (rchen)',
+              href: '/rchen',
+            }),
+          ];
+        }
+        return [];
+      });
+
+      const prInfo = extractPRInfo();
+
+      expect(prInfo.reviewers).toEqual(['rchen']);
+    });
+
     it('should extract PR author', () => {
       (document.querySelector as any).mockImplementation((selector) => {
         if (selector === '.js-issue-title') {
           return { textContent: 'Test PR Title' };
         }
         if (selector === '.timeline-comment-header-text .author') {
-          return { textContent: 'author.name' };
+          return mockUserElement({ text: 'author.name' });
         }
         return null;
       });
@@ -188,6 +310,22 @@ describe('GitHub Utilities', () => {
       const prInfo = extractPRInfo();
 
       expect(prInfo.author).toBe('author.name');
+    });
+
+    it('should extract author username from display-name text', () => {
+      (document.querySelector as any).mockImplementation((selector) => {
+        if (selector === '.js-issue-title') {
+          return { textContent: 'Test PR Title' };
+        }
+        if (selector === '.timeline-comment-header-text .author') {
+          return mockUserElement({ text: 'Casey Author (cauthor)' });
+        }
+        return null;
+      });
+
+      const prInfo = extractPRInfo();
+
+      expect(prInfo.author).toBe('cauthor');
     });
 
     it('should extract lines of code changes', () => {

@@ -1,7 +1,56 @@
 // Define the PR information interface
 import { debug } from './chrome-polyfill';
 import { getGitHubHost } from './storage';
-import { PRInfo } from './pr';
+import { extractGitHubUsername, PRInfo } from './pr';
+
+const PROFILE_USERNAME_RE = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
+
+/**
+ * Read a username from a GitHub profile or hovercard path.
+ * Examples: /jsmith, /users/jsmith/hovercard
+ */
+const usernameFromProfilePath = (href: string | null | undefined): string | undefined => {
+  if (!href || href === '#' || href.startsWith('javascript:')) return undefined;
+
+  let pathname = href;
+  try {
+    pathname = /^https?:\/\//i.test(href) ? new URL(href).pathname : href.split(/[?#]/)[0];
+  } catch {
+    return undefined;
+  }
+
+  const segments = pathname.split('/').filter(Boolean);
+  const candidate =
+    segments[0] === 'users' && segments[1] ? segments[1] : segments.length === 1 ? segments[0] : undefined;
+  if (!candidate) return undefined;
+
+  try {
+    const decoded = decodeURIComponent(candidate);
+    return PROFILE_USERNAME_RE.test(decoded) ? decoded : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+/**
+ * Prefer href / hovercard over visible text. GitHub now renders
+ * "Display Name (username)", and textContent can also include avatar alt text.
+ */
+export const extractUsernameFromUserElement = (el: Element): string | undefined => {
+  const anchor = el.closest('a') || (el.tagName === 'A' ? el : el.querySelector('a'));
+  const fromHref = usernameFromProfilePath(anchor?.getAttribute('href'));
+  if (fromHref) return fromHref;
+
+  const hovercardUrl =
+    el.getAttribute('data-hovercard-url') ||
+    el.closest('[data-hovercard-url]')?.getAttribute('data-hovercard-url') ||
+    el.querySelector('[data-hovercard-url]')?.getAttribute('data-hovercard-url');
+  const fromHovercard = usernameFromProfilePath(hovercardUrl);
+  if (fromHovercard) return fromHovercard;
+
+  const text = el.textContent?.trim();
+  return text ? extractGitHubUsername(text) || undefined : undefined;
+};
 
 /**
  * Check if the given URL is a supported site (GitHub PR page)
@@ -115,7 +164,7 @@ export const extractPRInfo = (): PRInfo => {
         ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee",
       ),
     )
-      .map((link) => link.textContent?.trim())
+      .map((link) => extractUsernameFromUserElement(link))
       .filter((name): name is string => !!name);
 
     const authorElement =
@@ -123,8 +172,7 @@ export const extractPRInfo = (): PRInfo => {
       (document.querySelector('a.author') as HTMLElement | null) ||
       (document.querySelector('span.author') as HTMLElement | null);
 
-    const authorText = authorElement?.textContent?.trim();
-    const author = authorText ? authorText.replace(/^@/, '') : undefined;
+    const author = authorElement ? extractUsernameFromUserElement(authorElement) : undefined;
 
     const loc =
       document

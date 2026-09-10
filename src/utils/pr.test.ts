@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { formatPRPreviewMessage, wrapSlackMentions, getPRFormattingData, PRInfo } from './pr';
+import {
+  extractGitHubUsername,
+  formatPRPreviewMessage,
+  wrapSlackMentions,
+  getPRFormattingData,
+  sanitizeSlackUserId,
+  PRInfo,
+} from './pr';
 
 describe('PR Utilities', () => {
   const baseInfo: PRInfo = {
@@ -26,6 +33,36 @@ describe('PR Utilities', () => {
 
       expect(preview).toBe('*Test PR Title*\nhttps://github.com/user/repo/pull/123\nauthor: @authorname');
     });
+
+    it('formats author and reviewers from GitHub display-name text', () => {
+      const preview = formatPRPreviewMessage({
+        ...baseInfo,
+        loc: ['+272', '−2'],
+        author: 'Casey Author (cauthor)',
+        reviewers: ['Riley Chen (rchen)', 'Quinn Patel (qpatel)'],
+      });
+
+      expect(preview).toBe(
+        '*Test PR Title* (+272, −2)\nhttps://github.com/user/repo/pull/123\nauthor: @cauthor\nassigned: @rchen, @qpatel',
+      );
+    });
+  });
+
+  describe('extractGitHubUsername', () => {
+    it('returns a plain username unchanged', () => {
+      expect(extractGitHubUsername('rchen')).toBe('rchen');
+      expect(extractGitHubUsername('@cauthor')).toBe('cauthor');
+    });
+
+    it('extracts the handle from "Display Name (username)"', () => {
+      expect(extractGitHubUsername('Riley Chen (rchen)')).toBe('rchen');
+      expect(extractGitHubUsername('Casey Author (@cauthor)')).toBe('cauthor');
+      expect(extractGitHubUsername('Quinn Patel (qpatel)')).toBe('qpatel');
+    });
+
+    it('collapses whitespace before parsing', () => {
+      expect(extractGitHubUsername('  Riley   Chen\n(rchen)  ')).toBe('rchen');
+    });
   });
 
   describe('getPRFormattingData', () => {
@@ -38,6 +75,18 @@ describe('PR Utilities', () => {
 
       expect(data.sanitizedReviewers).toEqual(['username', 'useremailcom']);
       expect(data.sanitizedAuthor).toBe('authorname');
+    });
+
+    it('uses the GitHub username, not the display name', () => {
+      const data = getPRFormattingData({
+        ...baseInfo,
+        author: 'Casey Author (cauthor)',
+        reviewers: ['Riley Chen (rchen)', 'Quinn Patel (qpatel)'],
+      });
+
+      expect(data.sanitizedAuthor).toBe('cauthor');
+      expect(data.sanitizedReviewers).toEqual(['rchen', 'qpatel']);
+      expect(sanitizeSlackUserId('Riley Chen (rchen)')).toBe('rchen');
     });
   });
 
