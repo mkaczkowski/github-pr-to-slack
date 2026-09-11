@@ -134,6 +134,14 @@ Perfect for developers, QA engineers, and technical teams who use both GitHub an
 
 Run `npm run build` to build the extension for production.
 
+### Releasing
+
+1. Bump the version in both `package.json` and `manifest.json` (they must match).
+2. Run `npm run package`. This builds for production and writes a store-ready
+   archive to `releases/send-pr-to-slack-v<version>.zip`.
+3. Upload that ZIP in the [Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole),
+   using the matching `CHANGELOG.md` entry as the "What's new" text.
+
 ### Testing
 
 This project uses Vitest for testing. The test suite includes unit tests, integration tests, and coverage reporting.
