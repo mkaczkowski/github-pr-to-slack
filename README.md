@@ -15,6 +15,7 @@ This extension adds a convenient "Send to Slack" button to GitHub pull request p
 - [Use Cases](#use-cases)
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
+- [Changelog](#changelog)
 - [Contributing](#contributing)
 - [License](#license)
 - [Roadmap](#roadmap)
@@ -136,11 +137,25 @@ Run `npm run build` to build the extension for production.
 
 ### Releasing
 
-1. Bump the version in both `package.json` and `manifest.json` (they must match).
-2. Run `npm run package`. This builds for production and writes a store-ready
-   archive to `releases/send-pr-to-slack-v<version>.zip`.
-3. Upload that ZIP in the [Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole),
-   using the matching `CHANGELOG.md` entry as the "What's new" text.
+Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
+a patch bump for fixes only, a minor bump when the release adds a feature.
+
+1. Bump the version in both `package.json` and `manifest.json` (they must match,
+   and `npm run package` fails if they drift apart).
+2. Add the release to [CHANGELOG.md](CHANGELOG.md) under a new version heading.
+3. Run `npm run package`. This builds for production and writes a store-ready
+   archive to `releases/send-pr-to-slack-v<version>.zip`. The archive holds the
+   contents of `dist/`, since the store requires `manifest.json` at its root.
+4. Tag the release and publish it, attaching the archive:
+
+   ```bash
+   git tag -a v<version> -m "v<version>"
+   git push origin v<version>
+   gh release create v<version> releases/send-pr-to-slack-v<version>.zip
+   ```
+
+5. Upload the same ZIP in the [Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole),
+   using the `CHANGELOG.md` entry as the "What's new" text.
 
 ### Testing
 
@@ -159,6 +174,8 @@ This project uses Vitest for testing. The test suite includes unit tests, integr
 ```
 ├── icons/                  # Extension icons
 ├── manifest.json           # Extension configuration
+├── promo/                  # Store listing assets
+├── scripts/                # Build and packaging scripts
 ├── src/
 │   ├── background          # Background script
 │   ├── pages/              # Main application pages
@@ -172,8 +189,18 @@ This project uses Vitest for testing. The test suite includes unit tests, integr
 │   │   ├── fixtures/       # Test data
 │   │   └── utils/          # Testing utilities
 │   └── types/              # TypeScript type definitions
-└── dist/                   # Built extension (generated)
+├── dist/                   # Built extension (generated)
+└── releases/               # Packaged store archives (generated)
 ```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the notable changes in each version, and the
+[releases page](https://github.com/mkaczkowski/github-pr-to-slack/releases) for
+packaged archives.
+
+The version published in the Chrome Web Store may lag behind the latest release
+here, since store submissions go through review.
 
 ## Contributing
 

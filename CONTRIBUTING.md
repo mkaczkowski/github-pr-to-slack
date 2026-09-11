@@ -43,6 +43,10 @@ This section guides you through submitting an enhancement suggestion, including 
 - Document new code
 - End all files with a newline
 
+You do not need to bump the version or edit `CHANGELOG.md` in your pull request.
+Maintainers do both when cutting a release, so that a version number is only
+claimed once the release is actually published.
+
 ## Development Process
 
 ### Setting Up the Development Environment
@@ -66,6 +70,13 @@ This section guides you through submitting an enhancement suggestion, including 
 6. Commit your changes with a descriptive commit message
 7. Push to your fork: `git push origin feature/your-feature-name`
 8. Submit a pull request
+
+### Releasing
+
+Releases are cut by maintainers. The process, covering the version bump, the
+changelog entry, packaging the store archive with `npm run package`, and
+publishing the tag, is documented in the
+[Releasing section of the README](README.md#releasing).
 
 ## Styleguides
 
