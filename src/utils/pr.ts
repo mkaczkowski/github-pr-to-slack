@@ -8,7 +8,25 @@ export interface PRInfo {
   repo?: string;
 }
 
-export const sanitizeSlackUserId = (name: string): string => name.replace(/[.@]/g, '').replace(/[^a-zA-Z0-9_-]/g, '');
+/**
+ * GitHub sidebar/author text is now often "Display Name (username)".
+ * Prefer the parenthetical handle so Slack mentions stay usernames.
+ */
+export const extractGitHubUsername = (raw: string): string => {
+  const normalized = raw.replace(/\s+/g, ' ').trim().replace(/^@/, '');
+  if (!normalized) return '';
+
+  const parenthetical = normalized.match(/\(([^)]+)\)\s*$/);
+  if (parenthetical) {
+    const handle = parenthetical[1].trim().replace(/^@/, '');
+    if (handle) return handle;
+  }
+
+  return normalized;
+};
+
+export const sanitizeSlackUserId = (name: string): string =>
+  extractGitHubUsername(name).replace(/[.@]/g, '').replace(/[^a-zA-Z0-9_-]/g, '');
 
 export const formatLocText = (loc: string[] = []): string => (loc.length > 0 ? ` (${loc.join(', ')})` : '');
 
