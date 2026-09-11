@@ -3,32 +3,47 @@ import { isSupportedUrl, isOnPRPage, extractPRInfo, extractUsernameFromUserEleme
 import { getGitHubHost } from './storage';
 import { chromeMock } from '../test/mocks/chrome';
 
+interface MockUserElementOptions {
+  text: string;
+  /** Renders the element itself as <a href>, like GitHub's a.assignee / a.author. */
+  href?: string;
+  hovercardUrl?: string;
+  /** Nests the element inside <a href>, like an author span wrapped in a profile link. */
+  wrapperHref?: string;
+  /** Puts the hovercard URL on a child element rather than on the element itself. */
+  hovercardOnChild?: boolean;
+}
+
+/**
+ * Builds a real element so closest() / querySelector() behave as they do in the
+ * browser, instead of asserting against hand-written stand-ins for them.
+ */
 const mockUserElement = ({
   text,
   href,
   hovercardUrl,
-  tagName,
-}: {
-  text: string;
-  href?: string | null;
-  hovercardUrl?: string | null;
-  tagName?: string;
-}) => {
-  const el: any = {
-    tagName: tagName || (href ? 'A' : 'SPAN'),
-    textContent: text,
-    closest: vi.fn((selector: string) => {
-      if (selector === 'a' && (href || el.tagName === 'A')) return el;
-      if (selector === '[data-hovercard-url]' && hovercardUrl) return el;
-      return null;
-    }),
-    querySelector: vi.fn(() => null),
-    getAttribute: vi.fn((name: string) => {
-      if (name === 'href') return href ?? null;
-      if (name === 'data-hovercard-url') return hovercardUrl ?? null;
-      return null;
-    }),
-  };
+  wrapperHref,
+  hovercardOnChild,
+}: MockUserElementOptions): Element => {
+  const el = document.createElement(href ? 'a' : 'span');
+  el.textContent = text;
+
+  if (href) el.setAttribute('href', href);
+
+  if (hovercardUrl && hovercardOnChild) {
+    const child = document.createElement('span');
+    child.setAttribute('data-hovercard-url', hovercardUrl);
+    el.appendChild(child);
+  } else if (hovercardUrl) {
+    el.setAttribute('data-hovercard-url', hovercardUrl);
+  }
+
+  if (wrapperHref) {
+    const wrapper = document.createElement('a');
+    wrapper.setAttribute('href', wrapperHref);
+    wrapper.appendChild(el);
+  }
+
   return el;
 };
 
@@ -48,7 +63,7 @@ vi.mock('./chrome-polyfill', () => ({
 describe('extractUsernameFromUserElement', () => {
   it('reads the username from a profile href', () => {
     const el = mockUserElement({
-      text: 'Riley Chen (rchen)',
+      text: 'Riley Chen',
       href: '/rchen',
     });
 
@@ -57,7 +72,7 @@ describe('extractUsernameFromUserElement', () => {
 
   it('reads the username from a hovercard URL when href is missing', () => {
     const el = mockUserElement({
-      text: 'Riley Chen (rchen)',
+      text: 'Riley Chen',
       hovercardUrl: '/users/rchen/hovercard',
     });
 
@@ -66,21 +81,48 @@ describe('extractUsernameFromUserElement', () => {
 
   it('ignores javascript and hash hrefs and falls back to text', () => {
     expect(
-      extractUsernameFromUserElement(
-        mockUserElement({ text: 'Riley Chen (rchen)', href: 'javascript:void(0)' }),
-      ),
+      extractUsernameFromUserElement(mockUserElement({ text: 'Riley Chen (rchen)', href: 'javascript:void(0)' })),
     ).toBe('rchen');
-    expect(
-      extractUsernameFromUserElement(mockUserElement({ text: 'Quinn Patel (qpatel)', href: '#' })),
-    ).toBe('qpatel');
+    expect(extractUsernameFromUserElement(mockUserElement({ text: 'Quinn Patel (qpatel)', href: '#' }))).toBe('qpatel');
   });
 
   it('ignores multi-segment non-user hrefs', () => {
     expect(
-      extractUsernameFromUserElement(
-        mockUserElement({ text: 'Riley Chen (rchen)', href: '/orgs/box/people' }),
-      ),
+      extractUsernameFromUserElement(mockUserElement({ text: 'Riley Chen (rchen)', href: '/orgs/box/people' })),
     ).toBe('rchen');
+  });
+
+  it('reads the username from an enclosing profile link', () => {
+    const el = mockUserElement({
+      text: 'Riley Chen',
+      wrapperHref: '/rchen',
+    });
+
+    expect(extractUsernameFromUserElement(el)).toBe('rchen');
+  });
+
+  it('falls back to text when the enclosing link is not a profile link', () => {
+    const el = mockUserElement({
+      text: 'Riley Chen (rchen)',
+      wrapperHref: '/box/repo/pull/123',
+    });
+
+    expect(extractUsernameFromUserElement(el)).toBe('rchen');
+  });
+
+  it('reads the username from a hovercard URL on a child element', () => {
+    const el = mockUserElement({
+      text: 'Riley Chen',
+      hovercardUrl: '/users/rchen/hovercard',
+      hovercardOnChild: true,
+    });
+
+    expect(extractUsernameFromUserElement(el)).toBe('rchen');
+  });
+
+  it('keeps GitHub Enterprise usernames containing dots and underscores', () => {
+    expect(extractUsernameFromUserElement(mockUserElement({ text: 'x', href: '/casey.author' }))).toBe('casey.author');
+    expect(extractUsernameFromUserElement(mockUserElement({ text: 'x', href: '/casey_author' }))).toBe('casey_author');
   });
 });
 
@@ -255,10 +297,7 @@ describe('GitHub Utilities', () => {
           selector ===
           ".js-issue-sidebar-form[aria-label='Select reviewers'] span[data-hovercard-type='user'] a.assignee"
         ) {
-          return [
-            mockUserElement({ text: 'Riley Chen (rchen)' }),
-            mockUserElement({ text: 'Quinn Patel (qpatel)' }),
-          ];
+          return [mockUserElement({ text: 'Riley Chen (rchen)' }), mockUserElement({ text: 'Quinn Patel (qpatel)' })];
         }
         return [];
       });
@@ -283,7 +322,7 @@ describe('GitHub Utilities', () => {
         ) {
           return [
             mockUserElement({
-              text: 'Riley ChenRiley Chen (rchen)',
+              text: 'Riley Chen (stale-handle)',
               href: '/rchen',
             }),
           ];

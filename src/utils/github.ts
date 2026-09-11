@@ -37,7 +37,7 @@ const usernameFromProfilePath = (href: string | null | undefined): string | unde
  * "Display Name (username)", and textContent can also include avatar alt text.
  */
 export const extractUsernameFromUserElement = (el: Element): string | undefined => {
-  const anchor = el.closest('a') || (el.tagName === 'A' ? el : el.querySelector('a'));
+  const anchor = el.closest('a') || el.querySelector('a');
   const fromHref = usernameFromProfilePath(anchor?.getAttribute('href'));
   if (fromHref) return fromHref;
 
